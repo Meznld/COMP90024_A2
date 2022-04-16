@@ -1,4 +1,4 @@
-- hosts: control
+- hosts: workers
 
   roles:
     - role: docker
