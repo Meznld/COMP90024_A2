@@ -61,7 +61,7 @@ def find_suburb(long, lat):
                 return sub['properties']['sa2_name16']
     return None
 
-# parse json tweet from stream
+# parse json tweet from stream and store in couchdb
 def parse_tweet(tweet):
     
     if tweet['coordinates'] != None:
@@ -77,7 +77,7 @@ def parse_tweet(tweet):
         except:
             suburb = None
             pass
-    
+    # store in couchdb
     if suburb != None:
         if len(suburb) == 1:
         # couch_database.save()
@@ -113,6 +113,6 @@ def streamtweets():
     myStreamListener = MyStreamListener(api_key,api_secret_key,access_token,access_token_secret)
     myStreamListener.filter(languages =['en'], locations=MELBOURNE_BOUNDARY)
 
-streamtweets()
+# streamtweets()
 
 
