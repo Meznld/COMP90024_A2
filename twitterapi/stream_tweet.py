@@ -13,7 +13,7 @@ access_token_secret = 'whImRAgACzng0PT4OyU6lb90KIxbU4V0YxxxGUpcGko5s'
 
 suburbs_poly = '/Users/belkok/Documents/GitHub/COMP90024/COMP90024_A2/data/housing_type.json'
 
-# couch_database = database.create_database('stream')
+# couch_database = database.create_database('harvest')
 
 # authentication
 def auth_twitter():
@@ -70,16 +70,20 @@ def parse_tweet(tweet):
     else:
         try:
             if tweet['place']['place_type'] == 'city':
-                suburb = tweet['place']['name']
+                suburb = [s for s in suburbs if tweet['place']['name'] in s]
+
             else:
                 suburb = None
         except:
+            suburb = None
             pass
     
     if suburb != None:
+        if len(suburb) == 1:
         # couch_database.save()
-        print(suburb,tweet['text'])
-
+            print(suburb,tweet['text'])
+        else:
+            print(suburb,tweet['text'])
 
 # class for twitter stream
 class MyStreamListener(tweepy.Stream):
