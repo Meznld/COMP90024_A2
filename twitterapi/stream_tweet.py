@@ -1,6 +1,6 @@
 import json
 import tweepy
-
+import database
 from shapely.geometry import Polygon
 from shapely.geometry import Point
 
@@ -13,7 +13,7 @@ access_token_secret = 'whImRAgACzng0PT4OyU6lb90KIxbU4V0YxxxGUpcGko5s'
 
 suburbs_poly = '/Users/belkok/Documents/GitHub/COMP90024/COMP90024_A2/data/housing_type.json'
 
-# couch_database = database.create_database('harvest')
+couch_database = database.create_database('harvest')
 
 # authentication
 def auth_twitter():
@@ -66,25 +66,17 @@ def parse_tweet(tweet):
     
     if tweet['coordinates'] != None:
         suburb = find_suburb(tweet['coordinates'][0],tweet['coordinates'][1])
-    
     else:
         try:
-            if tweet['place']['place_type'] == 'city':
-                suburb = [s for s in suburbs if tweet['place']['name'] in s]
-
-            else:
-                suburb = None
+            suburb = tweet['place']['place_type']
         except:
             suburb = None
             pass
     # store in couchdb
     if suburb != None:
-        if len(suburb) == 1:
-        # couch_database.save()
-            print(suburb,tweet['text'])
-        else:
-            print(suburb,tweet['text'])
-
+        couch_database.save({'suburb': suburb, 'text': tweet.text})
+        # print(suburb,tweet['text'])
+  
 # class for twitter stream
 class MyStreamListener(tweepy.Stream):
     
@@ -113,6 +105,6 @@ def streamtweets():
     myStreamListener = MyStreamListener(api_key,api_secret_key,access_token,access_token_secret)
     myStreamListener.filter(languages =['en'], locations=MELBOURNE_BOUNDARY)
 
-# streamtweets()
+streamtweets()
 
 
