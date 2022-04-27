@@ -1,5 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, url_for, redirect
 import folium
+import requests
+import json
 
 app = Flask(__name__)
 
@@ -42,6 +44,35 @@ def map():
 @app.route('/features')
 def features():
     return render_template('Page2.html')
+
+@app.route("/login",methods=["POST", "GET"])
+def login():
+    if request.method == "POST":
+        user = request.form["nm"]
+        return redirect(url_for("user", usr=user))
+    else :
+        return render_template("login.html")
+
+@app.route("/<usr>")
+def user(usr):
+    return f"<h1>{usr}</hr>"
+
+@app.route("/takeinput/<string>")
+def takeinput(string):
+    return f"<h1>{string}</hr>"
+
+@app.route("/testGet/<str>")
+def testGet(str):
+    uri = "http://172.26.128.201:30396/"
+    try:
+        uResponse = requests.get(uri)
+        Jresponse = uResponse.text
+        data = json.loads(Jresponse)
+        output = data[str]
+    except requests.ConnectionError:
+       return "Connection Error"
+
+    return output
 
 if __name__ == '__main__':
     app.run(debug=True)
