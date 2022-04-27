@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\tony1\Dropbox\Git\Cluster And Cloud\Flask\simpe Map\venv"
+VIRTUAL_ENV="C:\Users\tony1\Documents\GitHub\COMP90024_A2\simpe Map\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

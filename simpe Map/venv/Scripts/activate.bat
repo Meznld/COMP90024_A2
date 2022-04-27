@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\tony1\Dropbox\Git\Cluster And Cloud\Flask\simpe Map\venv
+set VIRTUAL_ENV=C:\Users\tony1\Documents\GitHub\COMP90024_A2\simpe Map\venv
 
 if not defined PROMPT set PROMPT=$P$G
 
