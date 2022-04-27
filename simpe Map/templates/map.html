@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<head>    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    
+        <script>
+            L_NO_TOUCH = false;
+            L_DISABLE_3D = false;
+        </script>
+    
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.6.0/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_cc93cd798fde7f1d45f178fea36300ec {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+            </style>
+        
+</head>
+<body>    
+    
+            <div class="folium-map" id="map_cc93cd798fde7f1d45f178fea36300ec" ></div>
+        
+</body>
+<script>    
+    
+            var map_cc93cd798fde7f1d45f178fea36300ec = L.map(
+                "map_cc93cd798fde7f1d45f178fea36300ec",
+                {
+                    center: [-37.840935, 144.946457],
+                    crs: L.CRS.EPSG3857,
+                    zoom: 10,
+                    zoomControl: true,
+                    preferCanvas: false,
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_8370c69c40b695ddaa82f812b6f22832 = L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {"attribution": "Data by \u0026copy; \u003ca href=\"http://openstreetmap.org\"\u003eOpenStreetMap\u003c/a\u003e, under \u003ca href=\"http://www.openstreetmap.org/copyright\"\u003eODbL\u003c/a\u003e.", "detectRetina": false, "maxNativeZoom": 18, "maxZoom": 18, "minZoom": 0, "noWrap": false, "opacity": 1, "subdomains": "abc", "tms": false}
+            ).addTo(map_cc93cd798fde7f1d45f178fea36300ec);
+        
+    
+            var marker_aae9ff45d0227471a805f02e732ae7f2 = L.marker(
+                [-37.823364, 144.95633],
+                {}
+            ).addTo(map_cc93cd798fde7f1d45f178fea36300ec);
+        
+    
+        var popup_3445adb49d2e3ac8f3b7cb8871eeb020 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_e344fcb5bcea6f9d38b74072e386db4c = $(`<div id="html_e344fcb5bcea6f9d38b74072e386db4c" style="width: 100.0%; height: 100.0%;"><b>100</b></div>`)[0];
+            popup_3445adb49d2e3ac8f3b7cb8871eeb020.setContent(html_e344fcb5bcea6f9d38b74072e386db4c);
+        
+
+        marker_aae9ff45d0227471a805f02e732ae7f2.bindPopup(popup_3445adb49d2e3ac8f3b7cb8871eeb020)
+        ;
+
+        
+    
+    
+            marker_aae9ff45d0227471a805f02e732ae7f2.bindTooltip(
+                `<div>
+                     South Bank
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_f3343b711bb37b51f6a8c7e322b10e11 = L.marker(
+                [-37.81794, 145.12369],
+                {}
+            ).addTo(map_cc93cd798fde7f1d45f178fea36300ec);
+        
+    
+        var popup_79a9a1ce83e9b59c573886da99a7a5e2 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_b23819e9b9d29b6a8c6ac5d53b6117c1 = $(`<div id="html_b23819e9b9d29b6a8c6ac5d53b6117c1" style="width: 100.0%; height: 100.0%;"><b>80</b></div>`)[0];
+            popup_79a9a1ce83e9b59c573886da99a7a5e2.setContent(html_b23819e9b9d29b6a8c6ac5d53b6117c1);
+        
+
+        marker_f3343b711bb37b51f6a8c7e322b10e11.bindPopup(popup_79a9a1ce83e9b59c573886da99a7a5e2)
+        ;
+
+        
+    
+    
+            marker_f3343b711bb37b51f6a8c7e322b10e11.bindTooltip(
+                `<div>
+                     Box Hill
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_aabdf4a8d11a5ed47f31b715fc25983b = L.marker(
+                [-38.148991411100134, 144.35844532757642],
+                {}
+            ).addTo(map_cc93cd798fde7f1d45f178fea36300ec);
+        
+    
+        var popup_ad8178c4c0166312ec21a73085e1f91b = L.popup({"maxWidth": "100%"});
+
+        
+            var html_006c5f1fc1958b7f9f69da9ba256075c = $(`<div id="html_006c5f1fc1958b7f9f69da9ba256075c" style="width: 100.0%; height: 100.0%;"><b>50</b></div>`)[0];
+            popup_ad8178c4c0166312ec21a73085e1f91b.setContent(html_006c5f1fc1958b7f9f69da9ba256075c);
+        
+
+        marker_aabdf4a8d11a5ed47f31b715fc25983b.bindPopup(popup_ad8178c4c0166312ec21a73085e1f91b)
+        ;
+
+        
+    
+    
+            marker_aabdf4a8d11a5ed47f31b715fc25983b.bindTooltip(
+                `<div>
+                     Geelong
+                 </div>`,
+                {"sticky": true}
+            );
+        
+    
+            var marker_de31168ef8a1e5addc1d1aef68e4d460 = L.marker(
+                [-37.912430478752995, 144.9905811928703],
+                {}
+            ).addTo(map_cc93cd798fde7f1d45f178fea36300ec);
+        
+    
+        var popup_62419a02abe02e4edd782d6c6d155de6 = L.popup({"maxWidth": "100%"});
+
+        
+            var html_faf3762ac009a32bde415da3ec3dc66c = $(`<div id="html_faf3762ac009a32bde415da3ec3dc66c" style="width: 100.0%; height: 100.0%;"><b>50</b></div>`)[0];
+            popup_62419a02abe02e4edd782d6c6d155de6.setContent(html_faf3762ac009a32bde415da3ec3dc66c);
+        
+
+        marker_de31168ef8a1e5addc1d1aef68e4d460.bindPopup(popup_62419a02abe02e4edd782d6c6d155de6)
+        ;
+
+        
+    
+    
+            marker_de31168ef8a1e5addc1d1aef68e4d460.bindTooltip(
+                `<div>
+                     Brighton
+                 </div>`,
+                {"sticky": true}
+            );
+        
+</script>
