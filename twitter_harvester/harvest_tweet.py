@@ -8,7 +8,7 @@ credentials = 'twitter_harvester/credentials.json'
 suburbs_poly = 'data/housing_type.json'
 
 # initialize coucbdb
-# couch_database = database.create_database('harvest')
+couch_database = database.create_database('harvest')
 
 def get_credentials(credentials_file):
     read_json = json.load(open(credentials))
@@ -95,7 +95,7 @@ def parse_tweet(tweet):
     # store in couchdb
     if suburb != None:
         
-        # couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet.text})
+        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet.text})
         # print(suburb,tweet['text'],tweet['id'])
         pass
   
