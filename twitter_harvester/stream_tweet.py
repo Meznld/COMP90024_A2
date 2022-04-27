@@ -68,14 +68,15 @@ def parse_tweet(tweet):
         suburb = find_suburb(tweet['coordinates'][0],tweet['coordinates'][1])
     else:
         try:
-            suburb = tweet['place']['place_type']
+            if tweet['place']['place_type'] == 'city':
+                suburb = tweet['place']['name']
         except:
             suburb = None
             pass
     # store in couchdb
     if suburb != None:
-        couch_database.save({'suburb': suburb, 'text': tweet.text})
-        # print(suburb,tweet['text'])
+        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet.text})
+        # print(suburb,tweet['text'],tweet['id'])
   
 # class for twitter stream
 class MyStreamListener(tweepy.Stream):
