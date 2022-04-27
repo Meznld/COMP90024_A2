@@ -4,27 +4,38 @@ import database
 from shapely.geometry import Polygon
 from shapely.geometry import Point
 
-
-
-api_key = 'RF78G9kS9YenS6eB6GEwcXg4o'
-api_secret_key = '7yl0aW8s4Mg5dZgCMMamlTQ1SIN40frPlpin6Vnwb0TZGvRRnp'
-access_token = '1343516103222251522-ITVMH6zGvtjmfSOGlGeN7j7JY9wATM'
-access_token_secret = 'whImRAgACzng0PT4OyU6lb90KIxbU4V0YxxxGUpcGko5s'
-
+credentials = '/Users/belkok/Documents/GitHub/COMP90024/COMP90024_A2/twitter_harvester/credentials.json'
 suburbs_poly = '/Users/belkok/Documents/GitHub/COMP90024/COMP90024_A2/data/housing_type.json'
 
+# initialize coucbdb
 couch_database = database.create_database('harvest')
 
+def get_credentials(credentials_file):
+    read_json = json.load(open(credentials))
+    stream = {}
+    for cred in read_json['stream']:
+        stream.update({cred: read_json['stream'][cred]})
+    search = []
+    for cred in read_json['search']:
+        search.append(cred) 
+    return stream, search
+    
+stream, search = get_credentials(credentials)
+
 # authentication
-def auth_twitter():
-    # authorize the API Key
-    auth = tweepy.OAuthHandler(api_key, api_secret_key)
 
-    # authorization to user's access token and access token secret
-    auth.set_access_token(access_token, access_token_secret)
+api_list=[]
 
-    # call the api
-    api = tweepy.API(auth, wait_on_rate_limit=True)
+def authentications():
+    # authenticate stream
+    auth = tweepy.OAuthHandler(stream['api_key'], stream['api_secret'])
+    auth.set_access_token(stream['access_token'], stream['access_secret'])
+
+    # authenticate search
+    for each in search:
+        auth = tweepy.OAuthHandler(each['api_key'],each['api_secret'])
+        api = tweepy.API(auth, wait_on_rate_limit=True)
+        api_list.append(api)
 
 # get suburbs from json housing file
 def get_suburbs(json_file):
@@ -63,9 +74,17 @@ def find_suburb(long, lat):
 
 # parse json tweet from stream and store in couchdb
 def parse_tweet(tweet):
-    
+    suburb = None
     if tweet['coordinates'] != None:
-        suburb = find_suburb(tweet['coordinates'][0],tweet['coordinates'][1])
+
+        if type(tweet['coordinates']) is dict:
+
+            suburb = find_suburb(tweet['coordinates']['coordinates'][0],tweet['coordinates']['coordinates'][1])
+
+        else:
+
+            suburb = find_suburb(tweet['coordinates'][0],tweet['coordinates'][1])
+
     else:
         try:
             if tweet['place']['place_type'] == 'city':
@@ -75,8 +94,10 @@ def parse_tweet(tweet):
             pass
     # store in couchdb
     if suburb != None:
+        
         couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet.text})
         # print(suburb,tweet['text'],tweet['id'])
+        pass
   
 # class for twitter stream
 class MyStreamListener(tweepy.Stream):
@@ -102,10 +123,24 @@ class MyStreamListener(tweepy.Stream):
 MELBOURNE_BOUNDARY = [144.3336,-38.5030,145.8784,-37.1751]
 
 def streamtweets():
-    auth_twitter()
-    myStreamListener = MyStreamListener(api_key,api_secret_key,access_token,access_token_secret)
+    authentications()
+    myStreamListener = MyStreamListener(stream['api_key'],stream['api_secret'],stream['access_token'],stream['access_secret'])
     myStreamListener.filter(languages =['en'], locations=MELBOURNE_BOUNDARY)
 
 streamtweets()
+
+# search historical tweets
+maxId = None
+while True:
+    # use each credentials' api to search
+    for api in api_list:
+        tweets = tweepy.Cursor(api.search_tweets, q='-filter:retweets',lang='en', geocode='-37.840935,144.946457,60km', count=100, max_id=maxId)
+        for each in tweets.items():
+            tweet = each._json    
+            maxId = tweet['id']-1
+            parse_tweet(tweet)
+     
+
+
 
 

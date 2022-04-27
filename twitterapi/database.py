@@ -1,4 +1,5 @@
 
+
 import couchdb
 import os
 
@@ -10,7 +11,7 @@ def create_database(db_name):
         database = couch.create(db_name)
     except:
         database = couch[db_name]
-
-
+        
+    return database
 
 
