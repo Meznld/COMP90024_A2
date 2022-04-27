@@ -1,14 +1,21 @@
 import json
 import tweepy
-import database
+import couchdb
+import os
 from shapely.geometry import Polygon
 from shapely.geometry import Point
 
-credentials = 'twitter_harvester/credentials.json'
-suburbs_poly = 'data/housing_type.json'
+
+credentials = os.path.join(os.path.dirname(os.path.abspath(__file__)), "credentials.json")
+suburbs_poly = os.path.join(os.path.dirname(os.path.abspath(__file__)), "housing_type.json")
 
 # initialize coucbdb
-couch_database = database.create_database('harvest')
+couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+try:
+    couch_database = couch.create('harvest')
+except:
+    couch_database = couch['harveset']
+
 
 def get_credentials(credentials_file):
     read_json = json.load(open(credentials))
