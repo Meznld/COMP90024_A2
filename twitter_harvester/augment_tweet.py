@@ -1,12 +1,22 @@
 
 import json
-import database
+import couchdb
+import os
 from shapely.geometry import Polygon
 from shapely.geometry import Point
+
 
 # put huge data on the server and change the filepath
 huge_data = '/Users/belkok/OneDrive/Uni Melb/2022 semester 1/COMP90024/Assignment/twitter-melb.json'
 suburbs_poly = 'data/housing_type.json'
+
+# initialize coucbdb
+couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+try:
+    couch_database = couch.create('augment')
+except:
+    couch_database = couch['augment']
+
 
 # get suburbs from json housing file
 def get_suburbs(json_file):
@@ -18,7 +28,7 @@ def get_suburbs(json_file):
 
     return suburb_list, read_json
 
-couch_database = database.create_database('augment')
+
 suburbs, boundary_file = get_suburbs(suburbs_poly)
 
 SINGLE = 'Polygon'
