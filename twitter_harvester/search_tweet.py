@@ -15,7 +15,7 @@ suburbs_poly = os.path.join(os.path.dirname(os.path.abspath(__file__)), "housing
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
     couch_database = couch.create('harvest')
-except:
+except Exception:
     couch_database = couch['harvest']
 
 
@@ -129,7 +129,7 @@ def parse_tweet(tweet):
             pass
     # store in couchdb
     if suburb != None:
-        sentiment = preprocess_tweet(tweet)
+        sentiment = preprocess_tweet(tweet['text'])
         couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text'], 'sentiment': sentiment[0], 'score': sentiment[1]})
         print("Tweet stored in CouchDB")
         # print(suburb,tweet['text'],tweet['id'])
@@ -150,7 +150,10 @@ while True:
         for each in tweets.items():
             tweet = each._json    
             maxId = tweet['id']-1
-            parse_tweet(tweet)
-     
+            try:
+                parse_tweet(tweet)
+            except:
+                print("unable to parse tweet")
+                continue
 
 

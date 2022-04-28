@@ -3,15 +3,7 @@ import couchdb
 
 
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+database = couch['historical']
 
-try:
-
-    database = couch.create('test')
-except:
-    database = couch['test']
-
-
-
-
-
-database.save({'id': 123, 'suburb': 'melbourne', 'text': 'hello'})
+for tweet in database:
+    print(database[tweet]['suburb'] + ": " + database[tweet]['sentiment'] + "\n" + database[tweet]['text'] + "\n")

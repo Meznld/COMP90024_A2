@@ -85,14 +85,21 @@ def find_suburb(long, lat):
                 return sub['properties']['sa2_name16']
     return None
 
+total_tweet = 0
+processed_tweet = 0
 with open(huge_data) as f:
     for val in f:
         try:
             tweet = json.loads(val[0:-2])
+            total_tweet += 1
             if tweet['doc']['metadata']['iso_language_code'] == 'en':
                 suburb = find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0])
-                couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text']})
+                sentiment = preprocess_tweet(tweet['doc']['text'])
+                couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text'],'sentiment':sentiment[0],'score':sentiment[1]})
+                processed_tweet += 1
             # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
             
         except:
             continue    
+print("total tweets: " + total_tweet)
+print("processed tweets: " + processed_tweet)
