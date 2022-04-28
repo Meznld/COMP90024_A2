@@ -4,6 +4,8 @@ import couchdb
 import os
 from shapely.geometry import Polygon
 from shapely.geometry import Point
+import re
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 
 credentials = os.path.join(os.path.dirname(os.path.abspath(__file__)), "credentials.json")
@@ -15,6 +17,37 @@ try:
     couch_database = couch.create('harvest')
 except:
     couch_database = couch['harvest']
+
+
+# get classification of score
+def polarity_score(compound):
+   
+    if compound == 0.0:
+        return "neutral"
+    elif compound < 0:
+        return "negative"
+    elif compound > 0:
+        return "positive"
+
+# initialize sentiment analyzer
+sid = SentimentIntensityAnalyzer()
+def preprocess_tweet(raw):
+    # remove urls and links
+    tweet = re.sub(r"http\S+|www\S+|https\S+|bit.ly/\S+'", '', raw, flags=re.MULTILINE)
+    tweet = tweet.strip('[link]')
+    tweet = re.sub(r'pic.twitter\S+','', tweet)
+
+    # remove retweet, hashtags and @user
+    tweet = re.sub(r"RT @[\w]*:", ' ', tweet, flags=re.MULTILINE)
+    tweet = re.sub(r"#(\w+)", ' ', tweet, flags=re.MULTILINE)
+    tweet = re.sub(r"@(\w+)", ' ', tweet, flags=re.MULTILINE)
+
+    # remove multiple spaces
+    tweet = re.sub("\s+"," ",tweet)
+
+    scores = sid.polarity_scores(tweet)
+    classify = polarity_score(scores['compound'])
+    return classify,scores['compound']
 
 
 def get_credentials(credentials_file):
@@ -101,8 +134,8 @@ def parse_tweet(tweet):
             pass
     # store in couchdb
     if suburb != None:
-        
-        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text']})
+        sentiment = preprocess_tweet(tweet)
+        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text'], 'sentiment': sentiment[0], 'score': sentiment[1]})
         print("Tweet stored in CouchDB")
         # print(suburb,tweet['text'],tweet['id'])
         pass
@@ -116,8 +149,8 @@ class MyStreamListener(tweepy.Stream):
             tweet = json.loads(data)
             print(tweet)
             if 'RT @' not in tweet['text']:
-            	parse_tweet(tweet)
-        
+                parse_tweet(tweet)
+                        
         except Exception:
             print("Failed to parse tweet")
             tweet = None

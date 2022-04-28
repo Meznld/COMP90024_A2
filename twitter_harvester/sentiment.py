@@ -1,10 +1,4 @@
 import re
-import string
-import pandas as pd
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-from nltk.stem import WordNetLemmatizer
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import couchdb
 
@@ -17,7 +11,6 @@ for idx,val in enumerate(db):
 
         test.append(db[val]['text'])
 
-stop_words=stopwords.words('english')
 sid = SentimentIntensityAnalyzer()
 
 def polarity_score(compound):
@@ -45,19 +38,11 @@ def preprocess_tweet(raw):
 
     scores = sid.polarity_scores(tweet)
     classify = polarity_score(scores['compound'])
-    return print(tweet + "\n", scores, classify)
+    return classify, scores['compound']
 
 
-
-
-# sentence = """ 😩 At eight o'clock on Thursday morning \n
-# ... Arthur didn't feel this very good.  www.help.com RT @aodsufh"""
-# # print(preprocess_tweet(sentence))
-# emoti = "i hate this"
-# print(preprocess_tweet(sentence))
-# # print(sentiment(preprocess_tweet(sentence)))
 
 for i in test:
 
-    preprocess_tweet(i)
+    print(preprocess_tweet(i)[1])
 
