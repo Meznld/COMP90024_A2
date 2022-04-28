@@ -117,6 +117,7 @@ class MyStreamListener(tweepy.Stream):
             print(tweet)
             if 'RT @' not in tweet['text']:
             	parse_tweet(tweet)
+        
         except Exception:
             print("Failed to parse tweet")
             tweet = None
