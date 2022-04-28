@@ -1,5 +1,5 @@
-
 import json
+import tweepy
 import couchdb
 import os
 from shapely.geometry import Polygon
@@ -7,16 +7,17 @@ from shapely.geometry import Point
 import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# put huge data on the server and change the filepath
-huge_data = '/Users/belkok/OneDrive/Uni Melb/2022 semester 1/COMP90024/Assignment/twitter-melb.json'
-suburbs_poly = 'data/housing_type.json'
+
+credentials = os.path.join(os.path.dirname(os.path.abspath(__file__)), "credentials.json")
+suburbs_poly = os.path.join(os.path.dirname(os.path.abspath(__file__)), "housing_type.json")
 
 # initialize coucbdb
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
-    couch_database = couch.create('historical')
+    couch_database = couch.create('harvest')
 except:
-    couch_database = couch['historical']
+    couch_database = couch['harvest']
+
 
 # get classification of score
 def polarity_score(compound):
@@ -48,6 +49,29 @@ def preprocess_tweet(raw):
     classify = polarity_score(scores['compound'])
     return classify,scores['compound']
 
+
+def get_credentials(credentials_file):
+    read_json = json.load(open(credentials))
+    
+    search = []
+    for cred in read_json['search']:
+        search.append(cred) 
+    return search
+    
+search = get_credentials(credentials)
+
+# authentication
+
+api_list=[]
+
+def authentications():
+
+    # authenticate search
+    for each in search:
+        auth = tweepy.OAuthHandler(each['api_key'],each['api_secret'])
+        api = tweepy.API(auth, wait_on_rate_limit=True)
+        api_list.append(api)
+
 # get suburbs from json housing file
 def get_suburbs(json_file):
     # open json file
@@ -58,12 +82,10 @@ def get_suburbs(json_file):
 
     return suburb_list, read_json
 
-
 suburbs, boundary_file = get_suburbs(suburbs_poly)
 
 SINGLE = 'Polygon'
 MULTI = 'MultiPolygon'
-
 # get suburb of tweet
 def find_suburb(long, lat):
     # look through each suburb block
@@ -85,14 +107,50 @@ def find_suburb(long, lat):
                 return sub['properties']['sa2_name16']
     return None
 
-with open(huge_data) as f:
-    for val in f:
+# parse json tweet from stream and store in couchdb
+def parse_tweet(tweet):
+    suburb = None
+    if tweet['coordinates'] != None:
+
+        if type(tweet['coordinates']) is dict:
+
+            suburb = find_suburb(tweet['coordinates']['coordinates'][0],tweet['coordinates']['coordinates'][1])
+
+        else:
+
+            suburb = find_suburb(tweet['coordinates'][0],tweet['coordinates'][1])
+
+    else:
         try:
-            tweet = json.loads(val[0:-2])
-            if tweet['doc']['metadata']['iso_language_code'] == 'en':
-                suburb = find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0])
-                couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text']})
-            # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
-            
+            if tweet['place']['place_type'] == 'city':
+                suburb = tweet['place']['name']
         except:
-            continue    
+            suburb = None
+            pass
+    # store in couchdb
+    if suburb != None:
+        sentiment = preprocess_tweet(tweet)
+        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text'], 'sentiment': sentiment[0], 'score': sentiment[1]})
+        print("Tweet stored in CouchDB")
+        # print(suburb,tweet['text'],tweet['id'])
+        pass
+
+
+MELBOURNE_BOUNDARY = [144.3336,-38.5030,145.8784,-37.1751]
+
+authentications()
+
+
+# search historical tweets
+maxId = None
+while True:
+    # use each credentials' api to search
+    for api in api_list:
+        tweets = tweepy.Cursor(api.search_tweets, q='-filter:retweets',lang='en', geocode='-37.840935,144.946457,60km', count=100, max_id=maxId)
+        for each in tweets.items():
+            tweet = each._json    
+            maxId = tweet['id']-1
+            parse_tweet(tweet)
+     
+
+

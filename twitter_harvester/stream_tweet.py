@@ -55,27 +55,19 @@ def get_credentials(credentials_file):
     stream = {}
     for cred in read_json['stream']:
         stream.update({cred: read_json['stream'][cred]})
-    search = []
-    for cred in read_json['search']:
-        search.append(cred) 
-    return stream, search
     
-stream, search = get_credentials(credentials)
+    return stream
+    
+stream = get_credentials(credentials)
 
 # authentication
-
-api_list=[]
 
 def authentications():
     # authenticate stream
     auth = tweepy.OAuthHandler(stream['api_key'], stream['api_secret'])
     auth.set_access_token(stream['access_token'], stream['access_secret'])
 
-    # authenticate search
-    for each in search:
-        auth = tweepy.OAuthHandler(each['api_key'],each['api_secret'])
-        api = tweepy.API(auth, wait_on_rate_limit=True)
-        api_list.append(api)
+    
 
 # get suburbs from json housing file
 def get_suburbs(json_file):
@@ -134,7 +126,7 @@ def parse_tweet(tweet):
             pass
     # store in couchdb
     if suburb != None:
-        sentiment = preprocess_tweet(tweet)
+        sentiment = preprocess_tweet(tweet['text'])
         couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text'], 'sentiment': sentiment[0], 'score': sentiment[1]})
         print("Tweet stored in CouchDB")
         # print(suburb,tweet['text'],tweet['id'])
@@ -171,19 +163,6 @@ def streamtweets():
     myStreamListener.filter(languages =['en'], locations=MELBOURNE_BOUNDARY)
 
 streamtweets()
-
-# search historical tweets
-maxId = None
-while True:
-    # use each credentials' api to search
-    for api in api_list:
-        tweets = tweepy.Cursor(api.search_tweets, q='-filter:retweets',lang='en', geocode='-37.840935,144.946457,60km', count=100, max_id=maxId)
-        for each in tweets.items():
-            tweet = each._json    
-            maxId = tweet['id']-1
-            parse_tweet(tweet)
-     
-
 
 
 
