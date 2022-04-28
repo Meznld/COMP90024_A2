@@ -14,7 +14,7 @@ couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/'
 try:
     couch_database = couch.create('harvest')
 except:
-    couch_database = couch['harveset']
+    couch_database = couch['harvest']
 
 
 def get_credentials(credentials_file):
@@ -102,7 +102,8 @@ def parse_tweet(tweet):
     # store in couchdb
     if suburb != None:
         
-        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet.text})
+        couch_database.save({'id': tweet['id'], 'suburb': suburb, 'text': tweet['text']})
+        print("Tweet stored in CouchDB")
         # print(suburb,tweet['text'],tweet['id'])
         pass
   
@@ -113,15 +114,16 @@ class MyStreamListener(tweepy.Stream):
         
         try: 
             tweet = json.loads(data)
-
+            print(tweet)
+            if 'RT @' not in tweet['text']:
+            	parse_tweet(tweet)
         except Exception:
             print("Failed to parse tweet")
             tweet = None
 
-        if 'RT @' not in tweet['text']:
-            parse_tweet(tweet)
+        
 
-    def on_error(sefl, status_code):
+    def on_error(self, status_code):
         if status_code ==420:
             return False
         else:
