@@ -1,5 +1,6 @@
 import React from 'react';
 import Chart from 'chart.js/auto';
+import styled from "styled-components";
 
 export class Chart1 extends React.Component {
     chartRef = React.createRef();
@@ -34,12 +35,17 @@ export class Chart1 extends React.Component {
     }
     render() {
         return (
-            <div style={{height: 650, width: 1200, margin: '15px 200px'}}>
+            <Container>
                 <canvas
                     id="myChart"
                     ref={this.chartRef}
                 />
-            </div>
+            </Container>
         )
     }
 }
+
+const Container = styled.div`
+    height: 100%;
+    width: 100%;
+`;
