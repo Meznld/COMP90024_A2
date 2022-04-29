@@ -1,19 +1,29 @@
-Steps inside folder simpe Map:
+~Steps inside folder simpe Map:
 
-1.py -3 -m venv venv
-
-2.venv\Scripts\activate
-
+(1.py -3 -m venv venv
+2.venv\Scripts\activate)
 3.pip install Flask
-
 4.pip install folium
 
-5.py main.py
+~Install Geopandas library:
 
-6.go to the IP address designated
+pip install wheel
+pip install pipwin
 
+pipwin install numpy
+pipwin install pandas
+pipwin install shapely
+pipwin install gdal
+pipwin install fiona (**require C++)
+pipwin install pyproj
+pipwin install six
+pipwin install rtree
+pipwin install geopandas==0.10.2
 
-Additional Resources:
+py main.py
+go to the IP address designated
 
-Border with GeoJSON
+~Additional Resources:
+
+~Border with GeoJSON
 https://www.youtube.com/watch?v=h16O4xt6yBU

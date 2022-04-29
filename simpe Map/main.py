@@ -2,8 +2,25 @@ from flask import Flask, render_template, request, url_for, redirect
 import folium
 import requests
 import json
+import geopandas as gpd
 
 app = Flask(__name__)
+
+#testing geopandas
+
+@app.route('/geopandas')
+def geopandas():
+    house_type = gpd.read_file(r"C:\Users\tony1\Documents\GitHub\COMP90024_A2\data\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
+
+    map = house_type.explore()
+    folium.Marker(
+        location=[-37.823364,144.95633],
+        popup="<b>100</b>",
+        tooltip="South Bank"
+    ).add_to(map)
+
+    map.save('templates/map.html')
+    return render_template('Page1.html')
 
 @app.route('/')
 def index():
