@@ -12,8 +12,8 @@ huge_data = '/Users/belkok/OneDrive/Uni Melb/2022 semester 1/COMP90024/Assignmen
 suburbs_poly = 'data/housing_type.json'
 
 # initialize coucbdb
-couch = couchdb.Server('http://user:pass@172.26.132.238:5984/')
-# couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+
+couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
     couch_database = couch.create('data')
 except:

@@ -51,5 +51,3 @@ for db in db_names:
                     db_election.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
         except:
             continue
-# for tweet in database:
-#     print(database[tweet]['suburb'] + ": " + database[tweet]['sentiment'] + "\n" + database[tweet]['text'] + "\n")

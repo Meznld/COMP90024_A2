@@ -1,3 +1,5 @@
 function (doc) {
-  emit(doc.suburb, doc.sentiment);
+  if (doc.suburb !== null){
+    emit([doc.suburb,doc.sentiment],1);
+  }
 }
