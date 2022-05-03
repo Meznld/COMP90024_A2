@@ -37,16 +37,19 @@ covid = ['covid','cov-19','covid-19','coronavirus','covid19']
 for db in db_names:
     database = couch[db]
     for id in database:
-        text = database[id]['text']
-        text = text.lower()
-        if any(k in text for k in housing):
-            db_housing.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
-        if any(k in text for k in crypto):
-            db_crypto.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
-        if any(k in text for k in election):
-            db_election.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
-        if any(k in text for k in covid):
+        try:
+            text = database[id]['text']
+            text = text.lower()
+        
+            if any(k in text for k in housing):
+                db_housing.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
+            if any(k in text for k in crypto):
+                db_crypto.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
+            if any(k in text for k in election):
                 db_election.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
-
+            if any(k in text for k in covid):
+                    db_election.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
+        except:
+            continue
 # for tweet in database:
 #     print(database[tweet]['suburb'] + ": " + database[tweet]['sentiment'] + "\n" + database[tweet]['text'] + "\n")
