@@ -14,9 +14,9 @@ suburbs_poly = 'data/housing_type.json'
 # initialize coucbdb
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
-    couch_database = couch.create('historical')
+    couch_database = couch.create('data')
 except:
-    couch_database = couch['historical']
+    couch_database = couch['data']
 
 # get classification of score
 def polarity_score(compound):
