@@ -12,11 +12,12 @@ huge_data = '/Users/belkok/OneDrive/Uni Melb/2022 semester 1/COMP90024/Assignmen
 suburbs_poly = 'data/housing_type.json'
 
 # initialize coucbdb
-couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+couch = couchdb.Server('http://user:pass@172.26.132.238:5984/')
+# couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
-    couch_database = couch.create('historical')
+    couch_database = couch.create('data')
 except:
-    couch_database = couch['historical']
+    couch_database = couch['data']
 
 # get classification of score
 def polarity_score(compound):
@@ -94,9 +95,10 @@ with open(huge_data) as f:
             total_tweet += 1
             if tweet['doc']['metadata']['iso_language_code'] == 'en':
                 suburb = find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0])
-                sentiment = preprocess_tweet(tweet['doc']['text'])
-                couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text'],'sentiment':sentiment[0],'score':sentiment[1]})
-                processed_tweet += 1
+                if suburb != None:
+                    sentiment = preprocess_tweet(tweet['doc']['text'])
+                    couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text'],'sentiment':sentiment[0],'score':sentiment[1]})
+                    processed_tweet += 1
             # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
             
         except:

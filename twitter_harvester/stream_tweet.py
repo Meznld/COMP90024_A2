@@ -15,7 +15,7 @@ suburbs_poly = os.path.join(os.path.dirname(os.path.abspath(__file__)), "housing
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
     couch_database = couch.create('harvest')
-except:
+except Exception:
     couch_database = couch['harvest']
 
 
