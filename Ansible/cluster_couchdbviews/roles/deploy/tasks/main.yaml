@@ -4,10 +4,10 @@
   ansible.builtin.copy:
           remote_src: no
           force: yes
-          src: /home/mesl/playbooks/cluster_harvestermanifest/harvester.yaml
+          src: /Users/belkok/Documents/GitHub/COMP90024/COMP90024_A2/Ansible/cluster_couchdbviews/couchdbviews.yaml
           dest: /home/ubuntu
 
 - name: create deployment
   kubernetes.core.k8s:
           state: present
-          src: /home/ubuntu/harvester.yaml
+          src: /home/ubuntu/couchdbviews.yaml

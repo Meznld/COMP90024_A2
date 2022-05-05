@@ -3,23 +3,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-        name: twitterstream-deployment
+        name: couchdbview-deployment
 spec:
         replicas: 1
         selector:
           matchLabels:
-            app: twitterstream
+            app: couchdbview
         strategy:
           type: RollingUpdate
         template:
           metadata:
             labels:
-              app: twitterstream
+              app: couchdbview
           spec:
             containers:
-              - name: tweetstream
-                image: tweetstream:1.0
+              - name: couchdbview
+                image: couchdbview:1.0
                 imagePullPolicy: Never
-              - name: tweetsearch
-                image: tweetsearch:1.0
-                imagePullPolicy: Never
+
