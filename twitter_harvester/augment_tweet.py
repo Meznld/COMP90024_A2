@@ -13,12 +13,12 @@ suburbs_poly = 'data/housing_type.json'
 
 # initialize coucbdb
 
-couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
-try:
-    couch_database = couch.create('augment')
-except:
-    del couch['augment']
-    couch_database = couch.create('augment')
+# couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+# try:
+#     couch_database = couch.create('augment')
+# except:
+#     del couch['augment']
+#     couch_database = couch.create('augment')
 
 # get classification of score
 def polarity_score(compound):
@@ -88,7 +88,7 @@ def find_suburb(long, lat):
     return None
 
 total_tweet = 0
-processed_tweet = 0
+processed_tweet = []
 
 with open(huge_data) as f:
     
@@ -96,18 +96,23 @@ with open(huge_data) as f:
     data = json.load(f)
     
     for tweet in data:
-        total_tweet += 1
         
+        t = {}
         
         suburb = find_suburb(tweet['longitude'],tweet['latitude'])
         
         if suburb != None:
             sentiment = preprocess_tweet(tweet['text'])
-            couch_database.save({'suburb': suburb, 'text': tweet['text'],'sentiment':sentiment[0],'score':sentiment[1]})
-            processed_tweet += 1
+            t['text'] = tweet['text']
+            t['suburb'] = suburb
+            t['sentiment'] = sentiment[0]
+            t['score'] = sentiment[1]
+            processed_tweet.append(t)
+            # couch_database.save({'suburb': suburb, 'text': tweet['text'],'sentiment':sentiment[0],'score':sentiment[1]})
+            
+            total_tweet += 1
         # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
         
         
 
 print(total_tweet)
-print(processed_tweet)

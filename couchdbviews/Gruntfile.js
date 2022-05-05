@@ -4,10 +4,10 @@ module.exports = function (grunt) {
         "couch-compile": {
           dbs: {
             files: {
-              "/tmp/housing.json": "couchdb/topics/housing",
-              "/tmp/covid.json": "couchdb/topics/covid",
-              "/tmp/election.json": "couchdb/topics/election",
-              "/tmp/crypto.json": "couchdb/topics/crypto"
+              "/tmp/housing.json": "couchdbviews/topics/housing",
+              "/tmp/covid.json": "couchdbviews/topics/covid",
+              "/tmp/election.json": "couchdbviews/topics/election",
+              "/tmp/crypto.json": "couchdbviews/topics/crypto"
             }
           }
         },
