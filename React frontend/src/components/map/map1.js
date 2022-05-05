@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { TileLayer, useMap, MapContainer, Marker, Popup } from 'react-leaflet';
+import { TileLayer, useMap, MapContainer, Marker, Popup, LayerGroup, LayersControl } from 'react-leaflet';
 import './map.css';
 import Shapefile from './shapefile';
 
@@ -38,12 +38,22 @@ const Map1 = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                <Shapefile data={geodata.data} />
-                <Marker position={[-37.823364, 144.95633]}>
-                    <Popup>
-                    A pretty CSS3 popup. <br /> Easily customizable.
-                    </Popup>
-                </Marker>
+                <LayersControl position='topright'>
+                    <LayersControl.Overlay name='Overlay Suburbs'>
+                        <Shapefile data={geodata.data} />
+                    </LayersControl.Overlay>
+
+                    <LayersControl.Overlay name='Markers'>
+                        <LayerGroup>
+                            <Marker position={[-37.823364, 144.95633]}>
+                                <Popup>
+                                A pretty CSS3 popup. <br /> Easily customizable.
+                                </Popup>
+                            </Marker>
+                        </LayerGroup>
+                    </LayersControl.Overlay>
+                </LayersControl>
+
             </MapContainer>
         </div>
         </>
