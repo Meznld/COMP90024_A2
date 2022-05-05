@@ -8,16 +8,17 @@ import re
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 # put huge data on the server and change the filepath
-huge_data = '/Users/belkok/OneDrive/Uni Melb/2022 semester 1/COMP90024/Assignment/twitter-melb.json'
+huge_data = 'data/raw_data.json'
 suburbs_poly = 'data/housing_type.json'
 
 # initialize coucbdb
 
 couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
 try:
-    couch_database = couch.create('data')
+    couch_database = couch.create('augment')
 except:
-    couch_database = couch['data']
+    del couch['augment']
+    couch_database = couch.create('augment')
 
 # get classification of score
 def polarity_score(compound):
@@ -88,20 +89,25 @@ def find_suburb(long, lat):
 
 total_tweet = 0
 processed_tweet = 0
+
 with open(huge_data) as f:
-    for val in f:
-        try:
-            tweet = json.loads(val[0:-2])
-            total_tweet += 1
-            if tweet['doc']['metadata']['iso_language_code'] == 'en':
-                suburb = find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0])
-                if suburb != None:
-                    sentiment = preprocess_tweet(tweet['doc']['text'])
-                    couch_database.save({'id': tweet['doc']['id'], 'suburb': suburb, 'text': tweet['doc']['text'],'sentiment':sentiment[0],'score':sentiment[1]})
-                    processed_tweet += 1
-            # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
-            
-        except:
-            continue    
-print("total tweets: " + total_tweet)
-print("processed tweets: " + processed_tweet)
+    
+    
+    data = json.load(f)
+    
+    for tweet in data:
+        total_tweet += 1
+        
+        
+        suburb = find_suburb(tweet['longitude'],tweet['latitude'])
+        
+        if suburb != None:
+            sentiment = preprocess_tweet(tweet['text'])
+            couch_database.save({'suburb': suburb, 'text': tweet['text'],'sentiment':sentiment[0],'score':sentiment[1]})
+            processed_tweet += 1
+        # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
+        
+        
+
+print(total_tweet)
+print(processed_tweet)

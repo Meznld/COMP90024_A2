@@ -4,17 +4,17 @@ module.exports = function (grunt) {
         "couch-compile": {
           dbs: {
             files: {
-              "/tmp/housing.json": "couchdb/housing/views/housing",
-              "/tmp/covid.json": "couchdb/covid/views/covid",
-              "/tmp/election.json": "couchdb/election/views/election",
-              "/tmp/crypto.json": "couchdb/crypto/views/crypto"
+              "/tmp/housing.json": "couchdb/topics/housing",
+              "/tmp/covid.json": "couchdb/topics/covid",
+              "/tmp/election.json": "couchdb/topics/election",
+              "/tmp/crypto.json": "couchdb/topics/crypto"
             }
           }
         },
         "couch-push": {
           options: {
-            user: process.env.user,
-            pass: process.env.pass
+            user: admin,
+            pass: XlkLSNezrwOlQ0fIx5C6
           },
           twitter: {
             files: {
