@@ -51,4 +51,4 @@ for db in db_names:
                     db_election.save({'id': database[id]['id'], 'suburb': database[id]['suburb'], 'text': database[id]['text'], 'sentiment': database[id]['sentiment'], 'score': database[id]['score']})
         except:
             continue
-
+print("tweets allocation done")
