@@ -11,14 +11,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 huge_data = 'data/raw_data.json'
 suburbs_poly = 'data/housing_type.json'
 
-# initialize coucbdb
 
-# couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
-# try:
-#     couch_database = couch.create('augment')
-# except:
-#     del couch['augment']
-#     couch_database = couch.create('augment')
 
 # get classification of score
 def polarity_score(compound):
@@ -114,5 +107,15 @@ with open(huge_data) as f:
         # print(find_suburb(tweet['doc']['geo']['coordinates'][1],tweet['doc']['geo']['coordinates'][0]),tweet['doc']['text'],tweet['doc']['id'])
         
         
+# initialize coucbdb
 
+couch = couchdb.Server('http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/')
+try:
+    couch_database = couch.create('augment')
+except:
+    del couch['augment']
+    couch_database = couch.create('augment')
+
+for each in processed_tweet:
+    couch_database.save({'suburb': each['suburb'], 'text': each['text'],'sentiment':each['sentiment'],'score':each['score']})
 print(total_tweet)
