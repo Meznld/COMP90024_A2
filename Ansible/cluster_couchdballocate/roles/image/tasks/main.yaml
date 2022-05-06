@@ -10,4 +10,4 @@
 - name: build docker images
   become: yes
   ansible.builtin.shell:
-          cmd: 'docker build -t couchdballocate:1.0 /home/ubuntu/allocate'
+          cmd: 'docker build -t couchdballocate:1.0 /home/ubuntu/couchdballocate'
