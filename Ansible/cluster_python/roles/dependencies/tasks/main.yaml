@@ -11,3 +11,14 @@
   ansible.builtin.pip:
           name: ['pip', 'openstacksdk']
           state: latest
+
+- name: install pexpect
+  become: yes
+  ansible.builtin.pip:
+          name: pexpect
+
+- name: install kubernetes library
+  become: yes
+  ansible.builtin.pip:
+          name: kubernetes
+
