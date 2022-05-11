@@ -60,6 +60,30 @@ def testGet2():
 
     return output
 
+@app.route("/testGetTopic/<str>")
+def testGetTopic(str):
+    uri = ""
+    if (str == "crypto"):
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/crypto/_design/aggregate/_view/suburb?group=true"
+    elif (str == "covid"):
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/covid/_design/aggregate/_view/suburb?group=true"
+    elif (str == "housing"):
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/housing/_design/aggregate/_view/suburb?group=true"
+    elif (str == "election"):
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/election/_design/aggregate/_view/suburb?group=true"
+    elif (str == "harvest"):
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/arvest/_design/aggregate/_view/suburb?group=true"
+
+    try:
+        uResponse = requests.get(uri)
+        Jresponse = uResponse.text
+        data = json.loads(Jresponse)
+        output = data
+    except requests.ConnectionError:
+       return "Connection Error"
+
+    return output
+
 if __name__ == '__main__':
     app.debug=True
     app.run()
