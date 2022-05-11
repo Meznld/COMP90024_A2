@@ -72,7 +72,7 @@ def testGetTopic(str):
     elif (str == "election"):
         uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/election/_design/aggregate/_view/suburb?group=true"
     elif (str == "harvest"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/arvest/_design/aggregate/_view/suburb?group=true"
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/harvest/_design/aggregate/_view/suburb?group=true"
 
     try:
         uResponse = requests.get(uri)
