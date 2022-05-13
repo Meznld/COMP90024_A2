@@ -1,3 +1,4 @@
+// works with ./map1.js, no use for ./map.js
 import React, { useEffect, useState } from 'react';
 import { GeoJSON } from 'react-leaflet'
 import shp from 'shpjs'

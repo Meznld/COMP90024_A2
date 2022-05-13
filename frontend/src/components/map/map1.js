@@ -1,3 +1,4 @@
+// manually upload .shp file, no backend fetch,  needs ./shapefile.js
 import React, {useState} from 'react';
 import { TileLayer, useMap, MapContainer, Marker, Popup, LayerGroup, LayersControl } from 'react-leaflet';
 import './map.css';
