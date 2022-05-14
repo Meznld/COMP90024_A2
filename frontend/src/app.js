@@ -11,7 +11,7 @@ export class App extends React.Component {
             <Layout>
                 <Header style={{background: "white"}}>
                     <Menu mode="horizontal">
-                        <Menu.Item><nav><Link to={"/mappage"}>nav to map page</Link></nav></Menu.Item>
+                        <Menu.Item><nav><Link to={"/mappage"}>Median rent weekly</Link></nav></Menu.Item>
                         <Menu.Item><nav><Link to={"/graphpage"}>nav to graph page</Link></nav></Menu.Item>
                         <Menu.Item><nav><Link to={"/newpage"}>nav to new empty page</Link></nav></Menu.Item>
                     </Menu>

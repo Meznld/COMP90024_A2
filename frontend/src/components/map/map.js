@@ -1,13 +1,15 @@
 // fetch backend and get a geojson data with concate properties of shapefiles and "sa2_g02_selected_medians_and_averages_census_2016-7286388448228732680.json"
 // display map and choropleth map of "median_rent_weekly"
-// no legend yet
 import React, {useState, useEffect, useRef} from 'react';
-import { TileLayer, MapContainer, GeoJSON } from 'react-leaflet';
+import { TileLayer, MapContainer, GeoJSON, useMap } from 'react-leaflet';
+import L from "leaflet";
 import './map.css';
+import './legend.css';
 
 const Map = () => {
     const [geodata, setGeodata] = useState({});
     const [fetched, setFetched] = useState(false);
+    const geoJsonRef = useRef();
 
     useEffect(() => {
         async function fetchData() {
@@ -19,8 +21,6 @@ const Map = () => {
         }
         fetchData();
     }, []);
-
-    const geoJsonRef = useRef();
 
     function getColor(d) {
         return d > 500 ? '#800026' :
@@ -46,23 +46,23 @@ const Map = () => {
     const highlightFeature = (e) => {
         let layer = e.target;
     
-        //layer.setStyle({
-        //    weight: 5,
-        //    color: '#666',
-        //    dashArray: '',
-        //    fillOpacity: 0.7
-        //});
+        layer.setStyle({
+            weight: 5,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
     
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
             layer.bringToFront();
         }
         console.log(typeof layer.feature.properties);
         if (layer.feature.properties) {
-            layer.bindPopup(Object.keys(layer.feature.properties).map(function (k) {
-              return k + ": " + layer.feature.properties[k];
-            }).join("<br />"), {
-              maxHeight: 200
-            }).openPopup();
+            layer.bindPopup(
+                "suburb: " + layer.feature.properties["feature_n2"] + "<br .>" + 
+                "median rent weekly: " + layer.feature.properties["median_rent_weekly"], 
+                {maxHeight: 200}
+            ).openPopup();
         }
     }
     const resetHighlight = (e) => {
@@ -73,6 +73,29 @@ const Map = () => {
             mouseover: highlightFeature,
             mouseout: resetHighlight
         });
+    }
+    function Legend() {
+        const map = useMap();
+        useEffect(() => {
+            const legend = L.control({ position: "bottomleft" });
+            legend.onAdd =  function (map) {
+    
+            var div = L.DomUtil.create('div', 'info legend'),
+                grades = [0, 200, 250, 300, 350, 400, 450, 500],
+                labels = [];
+        
+            // loop through our density intervals and generate a label with a colored square for each interval
+            for (var i = 0; i < grades.length; i++) {
+                div.innerHTML +=
+                    '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
+                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
+            }
+        
+            return div;
+        };
+        
+        legend.addTo(map);
+        }, [map]);
     }
 
     return(
@@ -92,7 +115,7 @@ const Map = () => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {fetched ? <GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/> : <></>}
+                {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
             </MapContainer>
         </div>
         </>
