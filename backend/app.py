@@ -69,7 +69,7 @@ def testGet2_top10positive():
 def testGetTopic(str):
     uri = ""
     if (str == "crypto"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C@172.26.128.201:30396/crypto/_design/aggregate/_view/suburb?group=true"
+        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/crypto/_design/aggregate/_view/suburb?group=true"
     elif (str == "covid"):
         uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/covid/_design/aggregate/_view/suburb?group=true"
     elif (str == "housing"):
