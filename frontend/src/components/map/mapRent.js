@@ -1,12 +1,10 @@
-// fetch backend and get a geojson data with concate properties of shapefiles and "sa2_g02_selected_medians_and_averages_census_2016-7286388448228732680.json"
-// display map and choropleth map of "median_rent_weekly"
-import React, {useState, useEffect, useRef} from 'react';
-import { TileLayer, MapContainer, GeoJSON, useMap } from 'react-leaflet';
-import L from "leaflet";
+import React, { useState, useEffect, useRef } from 'react';
+import { TileLayer, useMap, MapContainer, LayersControl, Marker, Popup, GeoJSON } from 'react-leaflet';
 import './map.css';
+import L from "leaflet";
 import './legend.css';
 
-const Map = () => {
+const MapRent = () => {
     const [geodata, setGeodata] = useState({});
     const [fetched, setFetched] = useState(false);
     const geoJsonRef = useRef();
@@ -34,7 +32,7 @@ const Map = () => {
     }
     const style = (feature) => {
         return ({
-            fillColor: getColor(feature.properties.median_rent_weekly),
+            fillColor: getColor(feature.properties["median_rent_weekly"]),
             weight: 2,
             opacity: 1,
             color: 'white',
@@ -42,7 +40,7 @@ const Map = () => {
             fillOpacity: 0.7
         });
     }
-
+    
     const highlightFeature = (e) => {
         let layer = e.target;
     
@@ -57,6 +55,7 @@ const Map = () => {
             layer.bringToFront();
         }
         console.log(typeof layer.feature.properties);
+        //layer.bindPopup(JSON.stringify(layer.feature.properties)).openPopup();
         if (layer.feature.properties) {
             layer.bindPopup(
                 "suburb: " + layer.feature.properties["feature_n2"] + "<br .>" + 
@@ -109,7 +108,7 @@ const Map = () => {
             crossorigin="">
         </script>
 
-        <div id="map1" style={{height: '100%'}}>
+        <div id="map" style={{height: '100%'}}>
             <MapContainer center={[-37.813, 144.963]} zoom={9} scrollWheelZoom={false}>
                 <TileLayer
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -121,5 +120,4 @@ const Map = () => {
         </>
     )
 }
-
-export default Map;
+export default MapRent;
