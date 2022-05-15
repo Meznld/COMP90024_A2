@@ -21,13 +21,13 @@ const MapMortgage = () => {
     }, []);
 
     function getColor(d) {
-        return d > 2800 ? '#800026' :
-               d > 2500  ? '#BD0026' :
-               d > 2200  ? '#E31A1C' :
+        return d > 2200 ? '#800026' :
+               d > 2100  ? '#BD0026' :
+               d > 2000  ? '#E31A1C' :
                d > 1900  ? '#FC4E2A' :
-               d > 1600   ? '#FD8D3C' :
-               d > 1300   ? '#FEB24C' :
-               d > 1000   ? '#FED976' :
+               d > 1800   ? '#FD8D3C' :
+               d > 1700   ? '#FEB24C' :
+               d > 1600   ? '#FED976' :
                           '#FFEDA0';
     }
     const style = (feature) => {
@@ -82,7 +82,7 @@ const MapMortgage = () => {
             legend.onAdd =  function (map) {
     
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0, 1000, 1300, 1600, 1900, 2200, 2500, 2800],
+                grades = [0, 1600, 1700, 1800, 1900, 2000, 2100, 2200],
                 labels = [];
         
             // loop through our density intervals and generate a label with a colored square for each interval

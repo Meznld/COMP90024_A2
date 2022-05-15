@@ -21,13 +21,13 @@ const MapPersonal = () => {
     }, []);
 
     function getColor(d) {
-        return d > 1000 ? '#800026' :
-               d > 900  ? '#BD0026' :
-               d > 800  ? '#E31A1C' :
-               d > 700  ? '#FC4E2A' :
-               d > 600   ? '#FD8D3C' :
-               d > 500   ? '#FEB24C' :
-               d > 400   ? '#FED976' :
+        return d > 920 ? '#800026' :
+               d > 850  ? '#BD0026' :
+               d > 780  ? '#E31A1C' :
+               d > 710  ? '#FC4E2A' :
+               d > 640   ? '#FD8D3C' :
+               d > 570   ? '#FEB24C' :
+               d > 500   ? '#FED976' :
                           '#FFEDA0';
     }
     const style = (feature) => {
@@ -80,7 +80,7 @@ const MapPersonal = () => {
             legend.onAdd =  function (map) {
     
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0, 400, 500, 600, 700, 800, 900, 1000],
+                grades = [0, 500, 570, 640, 710, 780, 850, 920],
                 labels = [];
         
             // loop through our density intervals and generate a label with a colored square for each interval
