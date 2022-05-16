@@ -11,16 +11,8 @@ import operator
 app = Flask(__name__)
 CORS(app)
 
-# load aurin data in the json file as a dataframe of properties, so that it can be merged to the shapefile properties
-with open(".\static\SA2-G02_Selected_Medians_and_Averages-Census_2016.json\sa2_g02_selected_medians_and_averages_census_2016-7286388448228732680.json") as f:
-    data = json.load(f)
-ldf = list()
-for item in data["features"]:
-    ldf.append(item["properties"])
-df = pd.DataFrame(ldf)
-
 @app.route("/")
-def hello_world():
+def hello():
     return ("Hello!")
 
 # shapefile data
@@ -28,14 +20,6 @@ def hello_world():
 def geopandas():
     house_type = gpd.read_file(r"static\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
     output = house_type.to_json()
-    return output
-
-# data with merged properties of aurin and shapefile
-@app.route("/aurin")
-def aurin():
-    house_type = gpd.read_file(r"static\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
-    result = house_type.merge(df, on="sa2_main16")
-    output = result.to_json()
     return output
 
 @app.route("/testGet2")
@@ -46,25 +30,9 @@ def testGet2():
         Jresponse = uResponse.text
         data = json.loads(Jresponse)
         output = data
-        print(type(output))
     except requests.ConnectionError:
        return "Connection Error"
 
-    return output
-
-# data sorted according to value, it takes a bit long to sort (about 30s on my computer)
-@app.route("/testGet2/sorted")
-def testGet2_top10positive():
-    uri = "http://user:pass@172.26.132.238:5984/data/_design/data/_view/test?group=true"
-    try:
-        uResponse = requests.get(uri)
-        Jresponse = uResponse.text
-        data = json.loads(Jresponse)
-        output = data
-        output["rows"] = sorted(data["rows"], key = lambda item: item['value'], reverse = True)
-    except requests.ConnectionError:
-       return "Connection Error"
-    
     return output
 
 # get request to retrieve data from couchDB by looping through ip addresses
@@ -111,18 +79,34 @@ def process(data):
             suburb_class.positive += value
         
         dict[suburb] = suburb_class
-
+    
     dict2 = {}
     for key, value in dict.items():
         value.positive_percent = round(value.positive/(value.negative + value.neutral + value.positive)*100,2)
         dict2[value.suburb] = value.positive_percent
+    
+    # prepare DataFrame and geoDataFrame to merge
+    dfoutput = pd.DataFrame({"feature_n2": dict2.keys(), "positive_percent": dict2.values()})
+    house_type = gpd.read_file(r"static\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
+    house_type["centroid"] = house_type.centroid
+    result = house_type.merge(dfoutput, on="feature_n2")
+    result["geometry"] = result["centroid"]
+    result = result.drop(columns=["centroid", "feature_c1", "median_re0"])
+    result = result.sort_values(by=["positive_percent"], ascending=False)
 
-    sorted_dict = sorted(dict2.items(), key=operator.itemgetter(1), reverse=True)
+    output = result.to_json()
 
-    json_object = json.dumps(sorted_dict, indent = 4) 
-    print(json_object)
+    return output
 
-    return json_object
+    # used for no-centroid [[suburb, positive_percent]] output
+    #sorted_dict = sorted(dict2.items(), key=operator.itemgetter(1), reverse=True)
+    #print("sorted_dict")
+    #print(sorted_dict)
+
+    #json_object = json.dumps(sorted_dict, indent = 4) 
+    #print(json_object)
+
+    #return json_object
 
 class Suburb:
     def __init__(self, name):
@@ -132,64 +116,48 @@ class Suburb:
         self.positive = 0
         self.positive_percent = 0
 
-@app.route("/demo/harvest")
-def demo():
-    uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/harvest/_design/aggregate/_view/suburb?group=true"
-    try:
-        uResponse = requests.get(uri)
-        Jresponse = uResponse.text
-        data = json.loads(Jresponse) # a dictionary
-        data["rows"] = data["rows"][:50]
-        # slower method
-        #lsuburb = list()
-        #lsum = list()
-        #lpositive = list()
-        #for item in data["rows"]:
-        #    suburb = item["key"][0]
-        #    sentiment = item["key"][1]
-        #    value = item["value"]
-        #    if (suburb in lsuburb):
-        #        i = lsuburb.index(suburb)
-        #        lsum[i] += value
-        #        if (sentiment == "positive"):
-        #            lpositive[i] += value
-        #    else:
-        #        lsuburb.append(suburb)
-        #        lsum.append(value)
-        #        if (sentiment == "positive"):
-        #            lpositive.append(value)
-        #        else:
-        #            lpositive.append(0)
-        #print(lsuburb)
-        #print(lsum)
-        #print(lpositive)
-        dfdata = pd.DataFrame.from_records(data["rows"])
-        dfdata = dfdata.join(pd.DataFrame(dfdata["key"].to_list(), columns=["suburb", "sentiment"]))
-        sumvalue = dfdata.groupby(["suburb"]).sum()
-        lsuburb = list(sumvalue.index)
-        lsum = list(sumvalue["value"])
-        dfoutput = pd.DataFrame({"feature_n2": lsuburb, "value": lsum, "positive": [0]*len(lsum)})
-        dfpositive = dfdata.loc[dfdata["sentiment"] == "positive", ["suburb", "value"]]
-        for suburb in list(dfpositive["suburb"]):
-            positive = dfpositive.loc[dfpositive["suburb"] == suburb, "value"].values
-            dfoutput.loc[dfoutput["feature_n2"] == suburb, "positive"] = dfoutput.loc[dfoutput["feature_n2"] == suburb, "positive"] + positive
-        dfoutput["value"] = dfoutput["positive"].div(dfoutput["value"])
-        dfoutput = dfoutput.drop(columns=["positive"])
-        print(dfoutput)
-    except requests.ConnectionError:
-       return "Connection Error"
-    
-    # prepare geoDataFrame to merge
+@app.route("/aurin/<str>")
+def aurin(str):
+    with open(".\static\SA2-G02_Selected_Medians_and_Averages-Census_2016.json\sa2_g02_selected_medians_and_averages_census_2016-7286388448228732680.json") as f:
+        data = json.load(f)
+    ldf = list()
+    for item in data["features"]:
+        ldf.append(item["properties"])
+    df = pd.DataFrame(ldf)
+
+    # both are geopandas.GeoDataFrame
     house_type = gpd.read_file(r"static\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
-    house_type["centroid"] = house_type.centroid
-    result = house_type.merge(dfoutput, on="feature_n2")
-    result["geometry"] = result["centroid"]
-    result = result.drop(columns=["centroid", "feature_c1"])
-    result = result.sort_values(by=["value"], ascending=False)
+    data = house_type.merge(df, on="sa2_main16")
 
-    #output = data
-    output = result.to_json()
+    if (str == "geodata"):
+        output = data.to_json()
 
+    # all properties are pandas.DataFrame, and its output(orient="records") has form: [{column -> value}, … ]
+    elif (str == "data"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_tot_hhd_inc_weekly", 
+        "median_mortgage_repay_monthly", "median_rent_weekly", "median_tot_fam_inc_weekly", 
+        "median_tot_prsnl_inc_weekly"])
+        output = properties.to_json(orient="records")
+    elif (str == "mortgage_sorted"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_mortgage_repay_monthly"])
+        properties = properties.sort_values(by=["median_mortgage_repay_monthly"], ascending=False)
+        output = properties.to_json(orient="records")
+    elif (str == "rent_sorted"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_rent_weekly"])
+        properties = properties.sort_values(by=["median_rent_weekly"], ascending=False)
+        output = properties.to_json(orient="records")
+    elif (str == "familyinc_sorted"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_tot_fam_inc_weekly"])
+        properties = properties.sort_values(by=["median_tot_fam_inc_weekly"], ascending=False)
+        output = properties.to_json(orient="records")
+    elif (str == "householdinc_sorted"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_tot_hhd_inc_weekly"])
+        properties = properties.sort_values(by=["median_tot_hhd_inc_weekly"], ascending=False)
+        output = properties.to_json(orient="records")
+    elif (str == "personalinc_sorted"):
+        properties = data.get(["feature_n2", "sa2_main16", "median_tot_prsnl_inc_weekly"])
+        properties = properties.sort_values(by=["median_tot_prsnl_inc_weekly"], ascending=False)
+        output = properties.to_json(orient="records")
     return output
 
 if __name__ == '__main__':
