@@ -21,13 +21,13 @@ const MapFamily = () => {
     }, []);
 
     function getColor(d) {
-        return d > 2800 ? '#800026' :
-               d > 2500  ? '#BD0026' :
+        return d > 2600 ? '#800026' :
+               d > 2400  ? '#BD0026' :
                d > 2200  ? '#E31A1C' :
-               d > 1900  ? '#FC4E2A' :
-               d > 1600   ? '#FD8D3C' :
-               d > 1300   ? '#FEB24C' :
-               d > 1000   ? '#FED976' :
+               d > 2000  ? '#FC4E2A' :
+               d > 1800   ? '#FD8D3C' :
+               d > 1600   ? '#FEB24C' :
+               d > 1400   ? '#FED976' :
                           '#FFEDA0';
     }
     const style = (feature) => {
@@ -80,7 +80,7 @@ const MapFamily = () => {
             legend.onAdd =  function (map) {
     
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0, 1000, 1300, 1600, 1900, 2200, 2500, 2800],
+                grades = [0, 1400, 1600, 1800, 2000, 2200, 2400, 2600],
                 labels = [];
         
             // loop through our density intervals and generate a label with a colored square for each interval
@@ -94,29 +94,16 @@ const MapFamily = () => {
         };
         
         legend.addTo(map);
+        //Will execute on unmount, or map change
+        return () => {
+            map.removeControl(legend)
+            }
         }, [map]);
     }
 
     return(
         <>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin=""
-        />
-        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-            crossorigin="">
-        </script>
-
-        <div id="map" style={{height: '100%'}}>
-            <MapContainer center={[-37.813, 144.963]} zoom={9} scrollWheelZoom={false}>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
-            </MapContainer>
-        </div>
+            {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
         </>
     )
 }

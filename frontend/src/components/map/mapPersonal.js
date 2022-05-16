@@ -21,13 +21,13 @@ const MapPersonal = () => {
     }, []);
 
     function getColor(d) {
-        return d > 1000 ? '#800026' :
-               d > 900  ? '#BD0026' :
-               d > 800  ? '#E31A1C' :
-               d > 700  ? '#FC4E2A' :
-               d > 600   ? '#FD8D3C' :
-               d > 500   ? '#FEB24C' :
-               d > 400   ? '#FED976' :
+        return d > 920 ? '#800026' :
+               d > 850  ? '#BD0026' :
+               d > 780  ? '#E31A1C' :
+               d > 710  ? '#FC4E2A' :
+               d > 640   ? '#FD8D3C' :
+               d > 570   ? '#FEB24C' :
+               d > 500   ? '#FED976' :
                           '#FFEDA0';
     }
     const style = (feature) => {
@@ -80,7 +80,7 @@ const MapPersonal = () => {
             legend.onAdd =  function (map) {
     
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0, 400, 500, 600, 700, 800, 900, 1000],
+                grades = [0, 500, 570, 640, 710, 780, 850, 920],
                 labels = [];
         
             // loop through our density intervals and generate a label with a colored square for each interval
@@ -94,29 +94,16 @@ const MapPersonal = () => {
         };
         
         legend.addTo(map);
+        //Will execute on unmount, or map change
+        return () => {
+            map.removeControl(legend)
+            }
         }, [map]);
     }
 
     return(
         <>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin=""
-        />
-        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-            crossorigin="">
-        </script>
-
-        <div id="map" style={{height: '100%'}}>
-            <MapContainer center={[-37.813, 144.963]} zoom={9} scrollWheelZoom={false}>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
-            </MapContainer>
-        </div>
+            {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
         </>
     )
 }

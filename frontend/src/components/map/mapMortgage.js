@@ -21,13 +21,13 @@ const MapMortgage = () => {
     }, []);
 
     function getColor(d) {
-        return d > 2800 ? '#800026' :
-               d > 2500  ? '#BD0026' :
-               d > 2200  ? '#E31A1C' :
+        return d > 2200 ? '#800026' :
+               d > 2100  ? '#BD0026' :
+               d > 2000  ? '#E31A1C' :
                d > 1900  ? '#FC4E2A' :
-               d > 1600   ? '#FD8D3C' :
-               d > 1300   ? '#FEB24C' :
-               d > 1000   ? '#FED976' :
+               d > 1800   ? '#FD8D3C' :
+               d > 1700   ? '#FEB24C' :
+               d > 1600   ? '#FED976' :
                           '#FFEDA0';
     }
     const style = (feature) => {
@@ -58,8 +58,8 @@ const MapMortgage = () => {
         //layer.bindPopup(JSON.stringify(layer.feature.properties)).openPopup();
         if (layer.feature.properties) {
             layer.bindPopup(
-                "suburb: " + layer.feature.properties["feature_n2"] + "<br .>" + 
-                "median mortgage repay monthly: " + layer.feature.properties["median_mortgage_repay_monthly"], 
+                "Suburb: " + layer.feature.properties["feature_n2"] + "<br .>" + 
+                "Meadian Monthly Mortgage Repayment: $" + layer.feature.properties["median_mortgage_repay_monthly"], 
                 {maxHeight: 200}
             ).openPopup();
         }
@@ -73,14 +73,16 @@ const MapMortgage = () => {
             mouseout: resetHighlight
         });
     }
+
     function Legend() {
         const map = useMap();
+        L.control({ position: "bottomleft" })
         useEffect(() => {
             const legend = L.control({ position: "bottomleft" });
             legend.onAdd =  function (map) {
     
             var div = L.DomUtil.create('div', 'info legend'),
-                grades = [0, 1000, 1300, 1600, 1900, 2200, 2500, 2800],
+                grades = [0, 1600, 1700, 1800, 1900, 2000, 2100, 2200],
                 labels = [];
         
             // loop through our density intervals and generate a label with a colored square for each interval
@@ -89,34 +91,20 @@ const MapMortgage = () => {
                     '<i style="background:' + getColor(grades[i] + 1) + '"></i> ' +
                     grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
             }
-        
             return div;
         };
         
         legend.addTo(map);
+        //Will execute on unmount, or map change
+        return () => {
+            map.removeControl(legend)
+            }
         }, [map]);
     }
 
     return(
         <>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-        integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-        crossorigin=""
-        />
-        <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
-            integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-            crossorigin="">
-        </script>
-
-        <div id="map" style={{height: '100%'}}>
-            <MapContainer center={[-37.813, 144.963]} zoom={9} scrollWheelZoom={false}>
-                <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
-            </MapContainer>
-        </div>
+            {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
         </>
     )
 }
