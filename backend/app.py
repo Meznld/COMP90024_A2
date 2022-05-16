@@ -5,6 +5,8 @@ import geopandas as gpd
 import pandas as pd
 import requests
 import json
+from asyncio.windows_events import NULL
+import operator
 
 app = Flask(__name__)
 CORS(app)
@@ -81,22 +83,47 @@ def testGetTopic(str1):
             uResponse = requests.get(uri3)
         Jresponse = uResponse.text
         data = json.loads(Jresponse)
-        data_top10 = process(data)
+        data_in_pos_sentiments = process(data)
     except requests.ConnectionError:
        return "Connection Error"
 
-    return data_top10
+    return data_in_pos_sentiments
 
-# function to process the data to list out top 10%
+# function to process the data to output list of suburb and % of positive sentiments
 def process(data):
-    '''
-    Class : Suburb name, Pos, Neg, Neutral
-    HashSet to store Class
-    Sort HashSet by % of positive
-    Return list of top 10 : {suburbnam : % of positive}
-    '''
+    dict = {}
     
-    return data
+    for i in data['rows']:
+        suburb = i['key'][0]
+        sentiment = i['key'][1]
+        value = i['value']
+
+        suburb_class = NULL
+        if suburb in dict:
+            suburb_class = dict[suburb]
+        else:
+            suburb_class = Suburb(suburb)
+        
+        if (sentiment == "negative"):
+            suburb_class.negative += value
+        elif (sentiment == "neutral"):
+            suburb_class.neutral += value
+        elif (sentiment == "positive"):
+            suburb_class.positive += value
+        
+        dict[suburb] = suburb_class
+
+    dict2 = {}
+    for key, value in dict.items():
+        value.positive_percent = round(value.positive/(value.negative + value.neutral + value.positive)*100,2)
+        dict2[value.suburb] = value.positive_percent
+
+    sorted_dict = sorted(dict2.items(), key=operator.itemgetter(1), reverse=True)
+
+    json_object = json.dumps(sorted_dict, indent = 4) 
+    print(json_object)
+
+    return json_object
 
 class Suburb:
     def __init__(self, name):
@@ -104,6 +131,7 @@ class Suburb:
         self.negative = 0
         self.neutral = 0
         self.positive = 0
+        self.positive_percent = 0
 
 if __name__ == '__main__':
     app.debug=True
