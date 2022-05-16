@@ -1,3 +1,4 @@
+from turtle import setpos
 from flask import Flask, render_template, jsonify
 from flask_cors import CORS
 import geopandas as gpd
@@ -65,29 +66,44 @@ def testGet2_top10positive():
     
     return output
 
-@app.route("/testGetTopic/<str>")
-def testGetTopic(str):
-    uri = ""
-    if (str == "crypto"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/crypto/_design/aggregate/_view/suburb?group=true"
-    elif (str == "covid"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/covid/_design/aggregate/_view/suburb?group=true"
-    elif (str == "housing"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/housing/_design/aggregate/_view/suburb?group=true"
-    elif (str == "election"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/election/_design/aggregate/_view/suburb?group=true"
-    elif (str == "harvest"):
-        uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/harvest/_design/aggregate/_view/suburb?group=true"
+# get request to retrieve data from couchDB by looping through ip addresses
+@app.route("/testGetTopic/<str1>")
+def testGetTopic(str1):
+    uri1 = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.133.82:30396/" + str1 + "/_design/aggregate/_view/suburb?group=true"
+    uri2 = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.132.238:30396/" + str1 + "/_design/aggregate/_view/suburb?group=true"
+    uri3 = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/" + str1 + "/_design/aggregate/_view/suburb?group=true"
 
     try:
-        uResponse = requests.get(uri)
+        uResponse = requests.get(uri1)
+        if "error" in uResponse.text:
+            uResponse = requests.get(uri2)
+        if "error" in uResponse.text:
+            uResponse = requests.get(uri3)
         Jresponse = uResponse.text
         data = json.loads(Jresponse)
-        output = data
+        data_top10 = process(data)
     except requests.ConnectionError:
        return "Connection Error"
 
-    return output
+    return data_top10
+
+# function to process the data to list out top 10%
+def process(data):
+    '''
+    Class : Suburb name, Pos, Neg, Neutral
+    HashSet to store Class
+    Sort HashSet by % of positive
+    Return list of top 10 : {suburbnam : % of positive}
+    '''
+    
+    return data
+
+class Suburb:
+    def __init__(self, name):
+        self.suburb = name
+        self.negative = 0
+        self.neutral = 0
+        self.positive = 0
 
 if __name__ == '__main__':
     app.debug=True

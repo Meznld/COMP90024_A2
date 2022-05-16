@@ -1,0 +1,25 @@
+{
+    "rows": [
+      {
+        "key": [
+          "Abbotsford", 
+          "negative"
+        ], 
+        "value": 123
+      }, 
+      {
+        "key": [
+          "Abbotsford", 
+          "neutral"
+        ], 
+        "value": 328
+      }, 
+      {
+        "key": [
+          "Abbotsford", 
+          "positive"
+        ], 
+        "value": 413
+      }
+    ]
+}
