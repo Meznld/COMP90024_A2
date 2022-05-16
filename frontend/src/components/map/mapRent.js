@@ -3,6 +3,7 @@ import { TileLayer, useMap, MapContainer, LayersControl, Marker, Popup, GeoJSON 
 import './map.css';
 import L from "leaflet";
 import './legend.css';
+import Markers from './markers';
 
 const MapRent = () => {
     const [geodata, setGeodata] = useState({});
@@ -11,7 +12,7 @@ const MapRent = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const result = await fetch("http://localhost:5000/aurin").then((response) => response.json())
+            const result = await fetch("http://localhost:5000/aurin/geodata").then((response) => response.json())
             setGeodata(result);
             console.log(result);
             console.log("geopandas fetch done");
@@ -103,7 +104,26 @@ const MapRent = () => {
 
     return(
         <>
-            {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
+        {fetched ? 
+        <>
+        <GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/>
+        <Legend />
+        <LayersControl position="topright">
+            <LayersControl.Overlay name="top suburbs with positive crypto tweets percentage">
+                <Markers selection={"crypto"}/>
+            </LayersControl.Overlay>
+            <LayersControl.Overlay name="top suburbs with positive covid tweets percentage">
+                <Markers selection={"covid"}/>
+            </LayersControl.Overlay>
+            <LayersControl.Overlay name="top suburbs with positive election tweets percentage">
+                <Markers selection={"election"}/>
+            </LayersControl.Overlay>
+            <LayersControl.Overlay name="top suburbs with positive housing tweets percentage">
+                <Markers selection={"housing"}/>
+            </LayersControl.Overlay>
+        </LayersControl>
+        </> 
+        : <></>}
         </>
     )
 }
