@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import Chartpage from './components/chartpage';
-import Newpage from './components/newpage';
 import {App} from './app'
 import MapBase from './components/map/mapBase';
 
@@ -16,7 +15,6 @@ ReactDOM.render(
         <Route path='personal' element={<MapBase tabNumber={4} />}></Route>
         <Route path='household' element={<MapBase tabNumber={5} />}></Route>
         <Route path='graphpage' element={<Chartpage />}></Route>
-        <Route path='newpage' element={<Newpage />}></Route>
     </Route>
 </Routes>
 </BrowserRouter>, 

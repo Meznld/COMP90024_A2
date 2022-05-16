@@ -14,7 +14,7 @@ const MapFamily = () => {
         async function fetchData() {
             const result = await fetch("http://localhost:5000/aurin/geodata").then((response) => response.json());
             setGeodata(result);
-            console.log(result);
+            //console.log(result);
             console.log("geodata fetch done");
             setFetched(true);
         }

@@ -1,0 +1,92 @@
+import React, { useRef, useState, useEffect } from "react";
+import Chart from 'chart.js/auto';
+
+// set a conversion for selection and real-backend-ouptup key
+const conversion = {
+    "mortgage": ["median_mortgage_repay_monthly", "median mortgage monthly"],
+    "rent": ["median_rent_weekly", "median rent weekly"],
+    "familyinc": ["median_tot_fam_inc_weekly", "median family income weekly"],
+    "personalinc": ["median_tot_prsnl_inc_weekly", "median personal income weekly"],
+    "householdinc": ["median_tot_hhd_inc_weekly", "median household income weekly"],
+    "crypto": ["positive_percentage", "positive crypto tweets percentage"],
+    "covid": ["positive_percentage", "positive covid tweets percentage"],
+    "election": ["positive_percentage", "positive election tweets percentage"],
+    "housing": ["positive_percentage", "positive housing tweets percentage"]
+}
+
+const Barchart = ({selection}) => {
+    const [data1, setData1] = useState([]);
+    const [fetched1, setFetched1] = useState(false);
+    const chartRef1 = useRef();
+    
+    useEffect(() => {
+        async function fetchData() {
+            if (["crypto", "covid", "election", "housing"].includes(selection)) {
+                const result1 = await fetch("http://localhost:5000/testGetTopic/" + selection).then((response) => response.json());
+                var endpos = 10;
+                if (result1["features"].length < 10) {
+                    endpos = result1["features"].length;
+                }
+                let top10 = [];
+                for (var i = 0; i < endpos; i++) {
+                    top10[i] = {"suburbs": result1["features"][i]["properties"]["feature_n2"], "value": result1["features"][i]["properties"]["positive_percent"]};
+                }
+                setData1(top10);
+                setFetched1(true);
+            }
+            else {
+                const result2 = await fetch("http://localhost:5000/aurin/" + selection + "_sorted").then((response) => response.json());
+                let top10 = [];
+                for (var i = 0; i < 10; i++) {
+                    top10[i] = {"suburbs": result2[i]["feature_n2"], "value": result2[i][conversion[selection][0]]};
+                }
+                setData1(top10);
+                setFetched1(true);
+            }
+        }
+        fetchData();
+    }, [selection]);
+
+    const barRef1 = chartRef1.current;
+    useEffect(() => {
+        var myChart = new Chart(barRef1, {
+            type: "bar",
+            data: {
+                datasets: [{
+                    label: "value",
+                    data: data1,
+                    borderColor: 'rgb(54, 162, 235)',
+                    backgroundColor: 'rgb(54, 162, 235, 0.5)',
+                }]
+            },
+            options: {
+                parsing: {
+                    xAxisKey: "suburbs",
+                    yAxisKey: "value"
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: "Top10 suburbs for " + conversion[selection][1]
+                    }
+                },
+                responsive: false,
+                maintainAspectRatio: false
+            }
+        });
+
+        return () => {
+            myChart.destroy()
+            setFetched1(false)
+        }
+
+    }, [fetched1]);
+
+    return (
+        <div  stype={{height: 250, width: 800}}>
+            <canvas id="myChart" ref={chartRef1} />
+        </div>
+    )
+};
+
+export default Barchart;

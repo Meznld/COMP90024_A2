@@ -5,13 +5,12 @@ import './map.css';
 const Markers = ({selection}) => {
     const [markerdata, setMarkerdata] = useState([]);
     const [fetched, setFetched] = useState(false);
-    console.log(selection);
 
     useEffect(() => {
         async function fetchData() {
             const result = await fetch("http://localhost:5000/testGetTopic/" + selection).then((response) => response.json());
             setMarkerdata(result["features"]);
-            console.log(result);
+            //console.log(result);
             console.log("markerdata fetch done");
             setFetched(true);
         }
