@@ -23,6 +23,7 @@ spec:
                 imagePullPolicy: Never
                 ports:
                         - containerPort: 5000
+                          name: backendport
 
 ---
 
@@ -35,8 +36,10 @@ spec:
   selector:
     app: samplebackend
   clusterIP: "10.109.223.25"
+  type: NodePort
   ports:
     - protocol: "TCP"
-      port: 6000
-      targetPort: 5000
+      port: 5000
+      targetPort: backendport
+      nodePort: 30002
 

@@ -5,7 +5,7 @@ const Demo = () => {
   const [data, setData] = useState([]);
 
   useEffect(()=>{
-    fetch("http://10.109.223.25:6000/file").then((response) => response.json().then((data)=>setData(data)));
+    fetch("http://172.26.128.201:30002/file").then((response) => response.json().then((data)=>setData(data)));
   }, []);
   console.log(JSON.stringify(data));
     
