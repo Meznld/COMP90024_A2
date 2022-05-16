@@ -57,7 +57,6 @@ def testGet2_top10positive():
         uResponse = requests.get(uri)
         Jresponse = uResponse.text
         data = json.loads(Jresponse)
-        #output = data
         output = data
         output["rows"] = sorted(data["rows"], key = lambda item: item['value'], reverse = True)
     except requests.ConnectionError:
@@ -86,6 +85,66 @@ def testGetTopic(str):
         output = data
     except requests.ConnectionError:
        return "Connection Error"
+
+    return output
+
+@app.route("/demo/harvest")
+def demo():
+    uri = "http://admin:XlkLSNezrwOlQ0fIx5C6@172.26.128.201:30396/harvest/_design/aggregate/_view/suburb?group=true"
+    try:
+        uResponse = requests.get(uri)
+        Jresponse = uResponse.text
+        data = json.loads(Jresponse) # a dictionary
+        data["rows"] = data["rows"][:50]
+        # slower method
+        #lsuburb = list()
+        #lsum = list()
+        #lpositive = list()
+        #for item in data["rows"]:
+        #    suburb = item["key"][0]
+        #    sentiment = item["key"][1]
+        #    value = item["value"]
+        #    if (suburb in lsuburb):
+        #        i = lsuburb.index(suburb)
+        #        lsum[i] += value
+        #        if (sentiment == "positive"):
+        #            lpositive[i] += value
+        #    else:
+        #        lsuburb.append(suburb)
+        #        lsum.append(value)
+        #        if (sentiment == "positive"):
+        #            lpositive.append(value)
+        #        else:
+        #            lpositive.append(0)
+        #print(lsuburb)
+        #print(lsum)
+        #print(lpositive)
+        dfdata = pd.DataFrame.from_records(data["rows"])
+        dfdata = dfdata.join(pd.DataFrame(dfdata["key"].to_list(), columns=["suburb", "sentiment"]))
+        sumvalue = dfdata.groupby(["suburb"]).sum()
+        lsuburb = list(sumvalue.index)
+        lsum = list(sumvalue["value"])
+        dfoutput = pd.DataFrame({"feature_n2": lsuburb, "value": lsum, "positive": [0]*len(lsum)})
+        dfpositive = dfdata.loc[dfdata["sentiment"] == "positive", ["suburb", "value"]]
+        for suburb in list(dfpositive["suburb"]):
+            positive = dfpositive.loc[dfpositive["suburb"] == suburb, "value"].values
+            dfoutput.loc[dfoutput["feature_n2"] == suburb, "positive"] = dfoutput.loc[dfoutput["feature_n2"] == suburb, "positive"] + positive
+        dfoutput["value"] = dfoutput["positive"].div(dfoutput["value"])
+        dfoutput = dfoutput.drop(columns=["positive"])
+        print(dfoutput)
+    except requests.ConnectionError:
+       return "Connection Error"
+    
+    # prepare geoDataFrame to merge
+    house_type = gpd.read_file(r"static\spatialise-rent\shp\sa2_p02_selected_medians_and_averages_census_2016-.shp")
+    house_type["centroid"] = house_type.centroid
+    result = house_type.merge(dfoutput, on="feature_n2")
+    result["geometry"] = result["centroid"]
+    result = result.drop(columns=["centroid", "feature_c1"])
+    result = result.sort_values(by=["value"], ascending=False)
+
+    #output = data
+    output = result.to_json()
 
     return output
 

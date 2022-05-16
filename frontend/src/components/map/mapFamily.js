@@ -1,20 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TileLayer, useMap, MapContainer, LayersControl, Marker, Popup, GeoJSON } from 'react-leaflet';
+import { TileLayer, useMap, MapContainer, LayersControl, Marker, Popup, GeoJSON, LayerGroup } from 'react-leaflet';
 import './map.css';
 import L from "leaflet";
 import './legend.css';
 
 const MapFamily = () => {
     const [geodata, setGeodata] = useState({});
+    const [markerdata, setMarkerdata] = useState({});
     const [fetched, setFetched] = useState(false);
     const geoJsonRef = useRef();
 
     useEffect(() => {
         async function fetchData() {
-            const result = await fetch("http://localhost:5000/aurin").then((response) => response.json())
-            setGeodata(result);
-            console.log(result);
+            const result1 = await fetch("http://localhost:5000/aurin").then((response) => response.json());
+            setGeodata(result1);
+            console.log(result1);
             console.log("geopandas fetch done");
+            const result2 = await fetch("http://localhost:5000/demo/harvest").then((response) => response.json());
+            setMarkerdata(result2);
+            console.log(result2);
+            console.log("markerdata fetch done");
             setFetched(true);
         }
         fetchData();
@@ -40,7 +45,6 @@ const MapFamily = () => {
             fillOpacity: 0.7
         });
     }
-    
     const highlightFeature = (e) => {
         let layer = e.target;
     
@@ -100,10 +104,66 @@ const MapFamily = () => {
             }
         }, [map]);
     }
+    function Top10layer({data}) {
+        if (data == "harvest demo"){
+            //const endpos = length(markerdata["features"]) or 10, hardcode or not?
+            const popuptext = [];
+            const position = [];
+            for (var i = 0; i < 10; i++) {
+                popuptext[i] = "suburb: " + markerdata["features"][i]["properties"]["feature_n2"] + 
+                ", value: " + markerdata["features"][i]["properties"]["value"]
+                position[i] = [markerdata["features"][i]["geometry"]["coordinates"][1], markerdata["features"][i]["geometry"]["coordinates"][0]]
+            }
+            return (
+                <LayerGroup>
+                    <Marker position={position[0]}>
+                        <Popup>{popuptext[0]}</Popup>
+                    </Marker>
+                    <Marker position={position[1]}>
+                        <Popup>{popuptext[1]}</Popup>
+                    </Marker>
+                    <Marker position={position[2]}>
+                        <Popup>{popuptext[2]}</Popup>
+                    </Marker>
+                    <Marker position={position[3]}>
+                        <Popup>{popuptext[3]}</Popup>
+                    </Marker>
+                    <Marker position={position[4]}>
+                        <Popup>{popuptext[4]}</Popup>
+                    </Marker>
+                    <Marker position={position[5]}>
+                        <Popup>{popuptext[5]}</Popup>
+                    </Marker>
+                    <Marker position={position[6]}>
+                        <Popup>{popuptext[6]}</Popup>
+                    </Marker>
+                    <Marker position={position[7]}>
+                        <Popup>{popuptext[7]}</Popup>
+                    </Marker>
+                    <Marker position={position[8]}>
+                        <Popup>{popuptext[8]}</Popup>
+                    </Marker>
+                    <Marker position={position[9]}>
+                        <Popup>{popuptext[9]}</Popup>
+                    </Marker>
+                </LayerGroup>
+            )
+        }
+    }
 
     return(
         <>
-            {fetched ? <><GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/><Legend /></> : <></>}
+            {fetched ? 
+            <>
+            <GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/>
+            <Legend />
+            <LayersControl position="topright">
+                <LayersControl.Overlay name="top10 in harvest demo">
+                    <Top10layer data={"harvest demo"}/>
+                </LayersControl.Overlay>
+            </LayersControl>
+            </> 
+            : <></>}
         </>
     )
 }
