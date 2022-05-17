@@ -4,6 +4,7 @@ import './map.css';
 import L from "leaflet";
 import './legend.css';
 import Markers from './markers';
+import { getBackend } from '../util';
 
 const MapMortgage = () => {
     const [geodata, setGeodata] = useState({});
@@ -12,7 +13,8 @@ const MapMortgage = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const result = await fetch("http://localhost:5000/aurin/geodata").then((response) => response.json())
+            const backendIp = await getBackend()
+            const result = await fetch(`http://${backendIp}/aurin/geodata`).then((response) => response.json())
             setGeodata(result);
             //console.log(result);
             console.log("geopandas fetch done");

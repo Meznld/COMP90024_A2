@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import Chart from 'chart.js/auto';
+import { getBackend } from "./util";
 
 // set a conversion for selection and real-backend-ouptup key
 const conversion = {
@@ -21,8 +22,10 @@ const Barchart = ({selection}) => {
     
     useEffect(() => {
         async function fetchData() {
+            const backendIp = await getBackend()
+
             if (["crypto", "covid", "election", "housing"].includes(selection)) {
-                const result1 = await fetch("http://localhost:5000/testGetTopic/" + selection).then((response) => response.json());
+                const result1 = await fetch(`http://${backendIp}/testGetTopic/` + selection).then((response) => response.json());
                 var endpos = 10;
                 if (result1["features"].length < 10) {
                     endpos = result1["features"].length;
@@ -35,7 +38,7 @@ const Barchart = ({selection}) => {
                 setFetched1(true);
             }
             else {
-                const result2 = await fetch("http://localhost:5000/aurin/" + selection + "_sorted").then((response) => response.json());
+                const result2 = await fetch(`http://${backendIp}/aurin/` + selection + "_sorted").then((response) => response.json());
                 let top10 = [];
                 for (var i = 0; i < 10; i++) {
                     top10[i] = {"suburbs": result2[i]["feature_n2"], "value": result2[i][conversion[selection][0]]};

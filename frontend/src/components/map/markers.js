@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { TileLayer, useMap, MapContainer, LayersControl, Marker, Popup, GeoJSON, LayerGroup } from 'react-leaflet';
 import './map.css';
+import { getBackend } from '../util';
 
 const Markers = ({selection}) => {
     const [markerdata, setMarkerdata] = useState([]);
@@ -8,7 +9,8 @@ const Markers = ({selection}) => {
 
     useEffect(() => {
         async function fetchData() {
-            const result = await fetch("http://localhost:5000/testGetTopic/" + selection).then((response) => response.json());
+            const backendIp = await getBackend()
+            const result = await fetch(`http://${backendIp}/testGetTopic/` + selection).then((response) => response.json());
             setMarkerdata(result["features"]);
             //console.log(result);
             console.log("markerdata fetch done");
