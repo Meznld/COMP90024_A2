@@ -110,16 +110,16 @@ const MapMortgage = () => {
         <GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/>
         <Legend />
         <LayersControl position="topright">
-            <LayersControl.Overlay name="top suburbs with positive crypto tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Crypto Tweets by Percentage">
                 <Markers selection={"crypto"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive covid tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Covid Tweets by Percentage">
                 <Markers selection={"covid"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive election tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Election Tweets by Percentage">
                 <Markers selection={"election"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive housing tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Housing Tweets by Percentage">
                 <Markers selection={"housing"}/>
             </LayersControl.Overlay>
         </LayersControl>

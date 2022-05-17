@@ -22,27 +22,27 @@ const Chartpage = () => {
 
     return (
         <div style={{height: '100%', width: '100%'}}>
-            <div><Select defaultValue="select a chart1" style={{ width: 200 }} onChange={handleChange1}>
-                <Option value="mortgage">mortgage monthly</Option>
-                <Option value="rent">rent weekly</Option>
-                <Option value="familyinc">family income weekly</Option>
-                <Option value="personalinc">personal income weekly</Option>
-                <Option value="householdinc">household income weekly</Option>
-                <Option value="crypto">positive crypto tweet percentage</Option>
-                <Option value="covid">positive covid tweet percentage</Option>
-                <Option value="election">positive election tweet percentage</Option>
-                <Option value="housing">positive housing tweet percentage</Option>
+            <div style={{height: '50px', paddingTop: '-50'}}> <Select defaultValue="Select a Chart" style={{ width: 200 }} onChange={handleChange1}>
+                <Option value="mortgage">Monthly Mortgage</Option>
+                <Option value="rent">Weekly Rent</Option>
+                <Option value="familyinc">Weekly Family Income</Option>
+                <Option value="personalinc">Weekly Personal Income</Option>
+                <Option value="householdinc">Weekly Household Income</Option>
+                <Option value="crypto">Percentage of Positive Crypto Tweets</Option>
+                <Option value="covid">Percentage of Positive Covid Tweets</Option>
+                <Option value="election">Percentage of Positive Election Tweets</Option>
+                <Option value="housing">Percentage of Positive Houseing Tweets</Option>
             </Select>
-            <Select defaultValue="select a chart2" style={{ width: 200 }} onChange={handleChange2}>
-                <Option value="mortgage">mortgage monthly</Option>
-                <Option value="rent">rent weekly</Option>
-                <Option value="familyinc">family income weekly</Option>
-                <Option value="personalinc">personal income weekly</Option>
-                <Option value="householdinc">household income weekly</Option>
-                <Option value="crypto">positive crypto tweet percentage</Option>
-                <Option value="covid">positive covid tweet percentage</Option>
-                <Option value="election">positive election tweet percentage</Option>
-                <Option value="housing">positive housing tweet percentage</Option>
+            <Select defaultValue="Select a Chart to Compare" style={{ width: 200 }} onChange={handleChange2}>
+                <Option value="mortgage">Monthly Mortgage</Option>
+                <Option value="rent">Weekly Rent</Option>
+                <Option value="familyinc">Weekly Family Income</Option>
+                <Option value="personalinc">Weekly Personal Income</Option>
+                <Option value="householdinc">Weekly Household Income</Option>
+                <Option value="crypto">Percentage of Positive Crypto Tweets</Option>
+                <Option value="covid">Percentage of Positive Covid Tweets</Option>
+                <Option value="election">Percentage of Positive Election Tweets</Option>
+                <Option value="housing">Percentage of Positive Houseing Tweets</Option>
             </Select></div>
             {barchart1 ? <Barchart selection={selection1}/> : <></>}
             {barchart2 ? <Barchart selection={selection2}/> : <></>}

@@ -17,7 +17,7 @@ export class App extends React.Component {
                         <Menu.Item><nav><Link to={"/family"}>Family income</Link></nav></Menu.Item>
                         <Menu.Item><nav><Link to={"/personal"}>Personal income</Link></nav></Menu.Item>
                         <Menu.Item><nav><Link to={"/household"}>Household income</Link></nav></Menu.Item>
-                        <Menu.Item><nav><Link to={"/graphpage"}>bar charts</Link></nav></Menu.Item>
+                        <Menu.Item><nav><Link to={"/graphpage"}>Bar Charts</Link></nav></Menu.Item>
                     </Menu>
                 </Header>
                 <Content>

@@ -3,15 +3,15 @@ import Chart from 'chart.js/auto';
 
 // set a conversion for selection and real-backend-ouptup key
 const conversion = {
-    "mortgage": ["median_mortgage_repay_monthly", "median mortgage monthly"],
-    "rent": ["median_rent_weekly", "median rent weekly"],
-    "familyinc": ["median_tot_fam_inc_weekly", "median family income weekly"],
-    "personalinc": ["median_tot_prsnl_inc_weekly", "median personal income weekly"],
-    "householdinc": ["median_tot_hhd_inc_weekly", "median household income weekly"],
-    "crypto": ["positive_percentage", "positive crypto tweets percentage"],
-    "covid": ["positive_percentage", "positive covid tweets percentage"],
-    "election": ["positive_percentage", "positive election tweets percentage"],
-    "housing": ["positive_percentage", "positive housing tweets percentage"]
+    "mortgage": ["median_mortgage_repay_monthly", "Median Monthly Mortage"],
+    "rent": ["median_rent_weekly", "Median Weekly Rent"],
+    "familyinc": ["median_tot_fam_inc_weekly", "Median Weekly Family Income"],
+    "personalinc": ["median_tot_prsnl_inc_weekly", "Median Weekly Personal Income"],
+    "householdinc": ["median_tot_hhd_inc_weekly", "Median Weekly Household Income"],
+    "crypto": ["positive_percentage", "Percentage of Postive Crypto Tweets"],
+    "covid": ["positive_percentage", "Percentage of Postive Covid Tweets"],
+    "election": ["positive_percentage", "Percentage of Postive Election Tweets"],
+    "housing": ["positive_percentage", "Percentage of Postive Housing Tweets"]
 }
 
 const Barchart = ({selection}) => {
@@ -67,7 +67,7 @@ const Barchart = ({selection}) => {
                 plugins: {
                     title: {
                         display: true,
-                        text: "Top10 suburbs for " + conversion[selection][1]
+                        text: "Top 10 Suburbs for " + conversion[selection][1]
                     }
                 },
                 responsive: false,
@@ -83,8 +83,8 @@ const Barchart = ({selection}) => {
     }, [fetched1]);
 
     return (
-        <div  stype={{height: 250, width: 800}}>
-            <canvas id="myChart" ref={chartRef1} />
+        <div  style={{height: '50%', width: '100%'}}>
+            <canvas className="chart" ref={chartRef1} height={window.innerHeight/2 - 100} width={window.innerWidth-100}/>
         </div>
     )
 };
