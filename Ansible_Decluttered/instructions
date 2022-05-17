@@ -16,3 +16,7 @@ CHECK THAT THE CEPHCLUSTER "rook-ceph" IS READY BEFORE PROCEEDING
 
 OTHER FUNCTIONALITIES
 12. cluster_harvestmanifest -> setup twitter harvester on cluster
+
+(after views are created)
+cluster_finalback
+cluster_finalfront
