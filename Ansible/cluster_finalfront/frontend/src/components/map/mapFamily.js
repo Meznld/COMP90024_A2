@@ -4,6 +4,7 @@ import './map.css';
 import L from "leaflet";
 import './legend.css';
 import Markers from './markers';
+import { getBackend } from '../util';
 
 const MapFamily = () => {
     const [geodata, setGeodata] = useState({});
@@ -12,9 +13,10 @@ const MapFamily = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const result = await fetch("http://172.26.128.201:30003/aurin/geodata").then((response) => response.json());
+            const backendIp = await getBackend()
+            const result = await fetch(`http://${backendIp}/aurin/geodata`).then((response) => response.json());
             setGeodata(result);
-            console.log(result);
+            //console.log(result);
             console.log("geodata fetch done");
             setFetched(true);
         }
@@ -108,16 +110,16 @@ const MapFamily = () => {
         <GeoJSON data={geodata} onEachFeature={onEachFeature} style={style} ref={geoJsonRef}/>
         <Legend />
         <LayersControl position="topright">
-            <LayersControl.Overlay name="top suburbs with positive crypto tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Crypto Tweets by Percentage">
                 <Markers selection={"crypto"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive covid tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Covid Tweets by Percentage">
                 <Markers selection={"covid"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive election tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Election Tweets by Percentage">
                 <Markers selection={"election"}/>
             </LayersControl.Overlay>
-            <LayersControl.Overlay name="top suburbs with positive housing tweets percentage">
+            <LayersControl.Overlay name="Top Suburbs with Positive Housing Tweets by Percentage">
                 <Markers selection={"housing"}/>
             </LayersControl.Overlay>
         </LayersControl>

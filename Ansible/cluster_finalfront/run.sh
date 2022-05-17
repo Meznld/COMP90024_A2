@@ -1,3 +1,3 @@
 #!/bin/bash
 
-ansible-playbook playbook.yaml -v
+ansible-playbook 1playbook.yaml -v
